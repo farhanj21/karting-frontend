@@ -6,6 +6,7 @@ export interface ITrack {
   slug: string;
   location: string;
   description?: string;
+  logo?: string;
   stats: {
     totalDrivers: number;
     worldRecord: number;
@@ -35,6 +36,7 @@ const TrackSchema = new Schema<ITrack>(
     slug: { type: String, required: true, unique: true, index: true },
     location: { type: String, required: true },
     description: { type: String },
+    logo: { type: String },
     stats: {
       totalDrivers: { type: Number, required: true },
       worldRecord: { type: Number, required: true },

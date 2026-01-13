@@ -1,26 +1,22 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Trophy, Users, Clock, TrendingUp } from 'lucide-react';
+import { Users, Clock, TrendingUp } from 'lucide-react';
 import { Track } from '@/types';
+import connectDB from '@/lib/mongodb';
+import TrackModel from '@/lib/models/Track';
 
 async function getTracks(): Promise<Track[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/tracks`, {
-      cache: 'no-store', // Always get fresh data
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch tracks');
-    }
-
-    const data = await response.json();
-    return data.tracks || [];
+    await connectDB();
+    const tracks = await TrackModel.find({}).sort({ 'stats.totalDrivers': -1 }).lean();
+    return JSON.parse(JSON.stringify(tracks));
   } catch (error) {
     console.error('Error fetching tracks:', error);
     return [];
   }
 }
+
+export const revalidate = 3600; // Revalidate every hour
 
 export default async function HomePage() {
   const tracks = await getTracks();
@@ -65,7 +61,7 @@ export default async function HomePage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
           <div className="bg-surface border border-surfaceHover rounded-lg p-6 text-center">
             <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Trophy className="w-6 h-6 text-primary" />
+              <TrendingUp className="w-6 h-6 text-primary" />
             </div>
             <h3 className="font-display font-semibold text-white mb-2">Tier Rankings</h3>
             <p className="text-sm text-gray-400">S+ to D tier classification based on statistical analysis</p>
@@ -115,7 +111,7 @@ export default async function HomePage() {
                     </h4>
                     <p className="text-gray-400">{track.location}</p>
                   </div>
-                  {track.logo ? (
+                  {track.logo && (
                     <div className="relative w-16 h-16 rounded-lg overflow-hidden group-hover:scale-110 transition-transform">
                       <Image
                         src={track.logo}
@@ -124,8 +120,6 @@ export default async function HomePage() {
                         className="object-contain"
                       />
                     </div>
-                  ) : (
-                    <Trophy className="w-8 h-8 text-primary opacity-50 group-hover:opacity-100 transition-opacity" />
                   )}
                 </div>
 

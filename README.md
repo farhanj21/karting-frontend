@@ -122,14 +122,9 @@ git push -u origin main
 1. Go to [vercel.com](https://vercel.com) and sign in
 2. Click "New Project"
 3. Import your GitHub repository
-4. Add environment variables:
+4. Add environment variable:
    - `MONGODB_URI`: Your MongoDB connection string
-   - `NEXT_PUBLIC_APP_URL`: Your Vercel deployment URL (e.g., https://karting-dashboard.vercel.app)
 5. Click "Deploy"
-
-### 3. Update Environment Variables
-
-After deployment, update `NEXT_PUBLIC_APP_URL` with your actual Vercel URL and redeploy.
 
 ## Development
 

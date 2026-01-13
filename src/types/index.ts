@@ -20,6 +20,7 @@ export interface TrackStats {
   top5Percent: number;
   top10Percent: number;
   median: number;
+  mean?: number;
   slowest: number;
   metaTime?: number;
   warZone?: {

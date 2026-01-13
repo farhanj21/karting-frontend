@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Track from '@/lib/models/Track';
+import LapRecord from '@/lib/models/LapRecord';
 
 export async function GET(
   request: Request,
@@ -19,6 +20,25 @@ export async function GET(
         },
         { status: 404 }
       );
+    }
+
+    // Calculate mean if not present
+    if (!track.stats.mean) {
+      const result = await LapRecord.aggregate([
+        { $match: { trackSlug: params.slug } },
+        {
+          $group: {
+            _id: null,
+            mean: { $avg: '$bestTime' },
+          },
+        },
+      ]);
+
+      if (result.length > 0) {
+        track.stats.mean = result[0].mean;
+      } else {
+        track.stats.mean = track.stats.median; // Fallback to median if no records
+      }
     }
 
     return NextResponse.json({

@@ -17,6 +17,7 @@ export interface ITrack {
     top5Percent: number;
     top10Percent: number;
     median: number;
+    mean?: number;
     slowest: number;
     metaTime?: number;
     warZone?: {
@@ -47,6 +48,7 @@ const TrackSchema = new Schema<ITrack>(
       top5Percent: { type: Number, required: true },
       top10Percent: { type: Number, required: true },
       median: { type: Number, required: true },
+      mean: { type: Number },
       slowest: { type: Number, required: true },
       metaTime: { type: Number },
       warZone: {

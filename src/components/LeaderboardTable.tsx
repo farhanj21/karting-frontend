@@ -8,9 +8,10 @@ import { ExternalLink } from 'lucide-react';
 interface LeaderboardTableProps {
   records: LapRecord[];
   loading?: boolean;
+  startPosition?: number;
 }
 
-export default function LeaderboardTable({ records, loading }: LeaderboardTableProps) {
+export default function LeaderboardTable({ records, loading, startPosition = 1 }: LeaderboardTableProps) {
   if (loading) {
     return (
       <div className="space-y-2">

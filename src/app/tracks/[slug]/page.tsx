@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useState, useEffect, useCallback } from 'react';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Trophy, Users, Clock, TrendingUp, ChevronLeft, Filter } from 'lucide-react';
@@ -10,12 +10,12 @@ import SearchBar from '@/components/SearchBar';
 import LeaderboardTable from '@/components/LeaderboardTable';
 import TierDistributionChart from '@/components/TierDistributionChart';
 import TimeDistributionChart from '@/components/TimeDistributionChart';
+import TierBadge from '@/components/TierBadge';
 import { Track, LapRecord, TierDistribution, TimeDistribution } from '@/types';
-import { formatTime } from '@/lib/utils';
+import { formatTime, formatGap } from '@/lib/utils';
 
 export default function TrackLeaderboardPage() {
   const params = useParams();
-  const router = useRouter();
   const slug = params.slug as string;
 
   const [track, setTrack] = useState<Track | null>(null);
@@ -27,6 +27,7 @@ export default function TrackLeaderboardPage() {
   const [selectedTier, setSelectedTier] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
 
   // Fetch track data
   useEffect(() => {
@@ -51,7 +52,7 @@ export default function TrackLeaderboardPage() {
       try {
         const params = new URLSearchParams({
           page: page.toString(),
-          limit: '50',
+          limit: rowsPerPage.toString(),
         });
 
         if (searchQuery) {
@@ -77,7 +78,7 @@ export default function TrackLeaderboardPage() {
     }
 
     fetchLeaderboard();
-  }, [slug, searchQuery, selectedTier, page]);
+  }, [slug, searchQuery, selectedTier, page, rowsPerPage]);
 
   // Fetch stats
   useEffect(() => {
@@ -98,15 +99,23 @@ export default function TrackLeaderboardPage() {
     fetchStats();
   }, [slug]);
 
-  const handleSearch = (query: string) => {
+  const handleSearch = useCallback((query: string) => {
     setSearchQuery(query);
     setPage(1);
-  };
+  }, []);
 
-  const handleTierFilter = (tier: string) => {
-    setSelectedTier(tier === selectedTier ? '' : tier);
+  const handleTierFilter = useCallback((tier: string) => {
+    setSelectedTier(prevTier => {
+      const newTier = tier === prevTier ? '' : tier;
+      return newTier;
+    });
     setPage(1);
-  };
+  }, []);
+
+  const handleRowsPerPageChange = useCallback((value: number) => {
+    setRowsPerPage(value);
+    setPage(1);
+  }, []);
 
   if (!track) {
     return (
@@ -155,13 +164,6 @@ export default function TrackLeaderboardPage() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
-            title="World Record"
-            value={track.stats.worldRecordStr}
-            subtitle={track.stats.recordHolder}
-            icon={Trophy}
-            iconColor="text-accent"
-          />
-          <StatCard
             title="Total Drivers"
             value={track.stats.totalDrivers.toLocaleString()}
             icon={Users}
@@ -170,16 +172,20 @@ export default function TrackLeaderboardPage() {
           <StatCard
             title="Top 1% Time"
             value={formatTime(track.stats.top1Percent)}
-            subtitle="Elite threshold"
             icon={TrendingUp}
             iconColor="text-secondary"
           />
           <StatCard
             title="Median Time"
             value={formatTime(track.stats.median)}
-            subtitle="Average performance"
             icon={Clock}
             iconColor="text-tierC"
+          />
+          <StatCard
+            title="Mean Time"
+            value={track.stats.mean ? formatTime(track.stats.mean) : 'N/A'}
+            icon={Clock}
+            iconColor="text-tierB"
           />
         </div>
 
@@ -196,6 +202,7 @@ export default function TrackLeaderboardPage() {
               </div>
               {['S+', 'S', 'A', 'B', 'C', 'D'].map((tier) => (
                 <button
+                  type="button"
                   key={tier}
                   onClick={() => handleTierFilter(tier)}
                   className={`px-3 py-1 rounded text-sm font-semibold transition-all ${
@@ -209,6 +216,7 @@ export default function TrackLeaderboardPage() {
               ))}
               {selectedTier && (
                 <button
+                  type="button"
                   onClick={() => setSelectedTier('')}
                   className="px-3 py-1 rounded text-sm text-gray-400 hover:text-white"
                 >
@@ -220,7 +228,7 @@ export default function TrackLeaderboardPage() {
         </div>
 
         {/* Leaderboard */}
-        <div className="bg-surface border border-surfaceHover rounded-lg p-6 mb-8">
+        <div className="mb-8">
           <h2 className="text-2xl font-display font-bold text-white mb-6">
             Leaderboard
             {searchQuery && (
@@ -234,32 +242,141 @@ export default function TrackLeaderboardPage() {
               </span>
             )}
           </h2>
-          <LeaderboardTable records={records} loading={loading} />
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex justify-center gap-2 mt-6">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="px-4 py-2 bg-surfaceHover text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface transition-colors"
-              >
-                Previous
-              </button>
-              <div className="flex items-center gap-2">
-                <span className="text-gray-400">
-                  Page {page} of {totalPages}
-                </span>
+          {/* Podium - Only show on first page without filters */}
+          {!loading && records.length >= 3 && page === 1 && !searchQuery && !selectedTier && (
+            <div className="bg-gradient-to-b from-surface to-background border border-surfaceHover rounded-xl p-8 mb-6">
+              <div className="flex items-center justify-center gap-4 max-w-4xl mx-auto">
+                {/* 2nd Place */}
+                <div className="flex-1 flex flex-col items-center">
+                  <div className="w-full bg-gradient-to-br from-gray-600 to-gray-800 rounded-lg p-6 text-center border-2 border-gray-500">
+                    <div className="text-4xl mb-2">🥈</div>
+                    <div className="text-sm text-gray-400 mb-2">2nd Place</div>
+                    <div className="text-lg font-display font-bold text-white mb-1">
+                      {records[1].driverName}
+                    </div>
+                    <div className="flex justify-center mb-2">
+                      <TierBadge tier={records[1].tier} />
+                    </div>
+                    <div className="text-2xl font-mono font-bold text-accent">
+                      {records[1].bestTimeStr}
+                    </div>
+                    <div className="text-xs text-gray-400 mt-2">
+                      +{formatGap(records[1].gapToP1)}
+                    </div>
+                  </div>
+                </div>
+
+                {/* 1st Place */}
+                <div className="flex-1 flex flex-col items-center">
+                  <div className="w-full bg-gradient-to-br from-yellow-500 to-yellow-700 rounded-lg p-6 text-center border-2 border-yellow-400 shadow-lg shadow-yellow-500/50">
+                    <div className="text-5xl mb-2">🏆</div>
+                    <div className="text-sm text-yellow-200 mb-2 font-semibold">Champion</div>
+                    <div className="text-xl font-display font-bold text-white mb-1">
+                      {records[0].driverName}
+                    </div>
+                    <div className="flex justify-center mb-2">
+                      <TierBadge tier={records[0].tier} />
+                    </div>
+                    <div className="text-3xl font-mono font-bold text-white">
+                      {records[0].bestTimeStr}
+                    </div>
+                    <div className="text-xs text-yellow-200 mt-2 font-semibold">
+                      World Record
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3rd Place */}
+                <div className="flex-1 flex flex-col items-center">
+                  <div className="w-full bg-gradient-to-br from-orange-700 to-orange-900 rounded-lg p-6 text-center border-2 border-orange-600">
+                    <div className="text-4xl mb-2">🥉</div>
+                    <div className="text-sm text-gray-400 mb-2">3rd Place</div>
+                    <div className="text-lg font-display font-bold text-white mb-1">
+                      {records[2].driverName}
+                    </div>
+                    <div className="flex justify-center mb-2">
+                      <TierBadge tier={records[2].tier} />
+                    </div>
+                    <div className="text-2xl font-mono font-bold text-accent">
+                      {records[2].bestTimeStr}
+                    </div>
+                    <div className="text-xs text-gray-400 mt-2">
+                      +{formatGap(records[2].gapToP1)}
+                    </div>
+                  </div>
+                </div>
               </div>
-              <button
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-                className="px-4 py-2 bg-surfaceHover text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface transition-colors"
-              >
-                Next
-              </button>
             </div>
           )}
+
+          {/* Rest of Leaderboard Table */}
+          <div className="bg-surface border border-surfaceHover rounded-lg p-6">
+            <LeaderboardTable
+              records={page === 1 && !searchQuery && !selectedTier ? records.slice(3) : records}
+              loading={loading}
+              startPosition={page === 1 && !searchQuery && !selectedTier ? 4 : (page - 1) * rowsPerPage + 1}
+            />
+
+            {/* Pagination */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
+              {/* Rows per page selector */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-400">Rows per page:</span>
+                <select
+                  value={rowsPerPage}
+                  onChange={(e) => handleRowsPerPageChange(Number(e.target.value))}
+                  className="px-3 py-2 bg-surfaceHover text-white rounded border border-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                >
+                  <option value={10}>10</option>
+                  <option value={20}>20</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+              </div>
+
+              {/* Page navigation */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPage(1)}
+                  disabled={page === 1}
+                  className="px-3 py-2 bg-surfaceHover text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface transition-colors"
+                >
+                  First
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className="px-4 py-2 bg-surfaceHover text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface transition-colors"
+                >
+                  Previous
+                </button>
+                <div className="flex items-center gap-2 px-4">
+                  <span className="text-gray-400">
+                    Page {page} of {totalPages}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                  className="px-4 py-2 bg-surfaceHover text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface transition-colors"
+                >
+                  Next
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPage(totalPages)}
+                  disabled={page === totalPages}
+                  className="px-3 py-2 bg-surfaceHover text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface transition-colors"
+                >
+                  Last
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Charts */}

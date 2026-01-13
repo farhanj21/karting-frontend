@@ -33,14 +33,20 @@ export default async function HomePage() {
               </h1>
               <p className="text-sm text-gray-400 mt-1">Lahore Track Leaderboards</p>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <div className="text-sm text-gray-400">Total Drivers</div>
-                <div className="text-2xl font-bold text-accent">
-                  {tracks.reduce((sum, track) => sum + (track.stats?.totalDrivers || 0), 0).toLocaleString()}
-                </div>
-              </div>
-            </div>
+            <nav className="flex items-center gap-6">
+              <Link
+                href="/tracks/sportzilla"
+                className="text-gray-400 hover:text-primary transition-colors font-medium"
+              >
+                Sportzilla
+              </Link>
+              <Link
+                href="/tracks/apex-autodrome"
+                className="text-gray-400 hover:text-primary transition-colors font-medium"
+              >
+                Apex Autodrome
+              </Link>
+            </nav>
           </div>
         </div>
       </header>

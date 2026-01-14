@@ -9,29 +9,29 @@ import { Track } from '@/types';
 
 // Static track data
 const TRACK_DATA: Record<string, any> = {
-  'sportzilla': {
-    name: 'Sportzilla Formula Karting',
-    location: 'Lahore, Pakistan',
+  'sportzilla-formula-karting': {
+    name: 'Sportzilla Formula Karting Club',
+    location: 'Bedian Road, Lahore, Pakistan',
     logo: '/logos/sportzilla.png',
     about: {
       layoutImage: 'https://via.placeholder.com/1200x600?text=Sportzilla+Track+Layout',
       description: 'Sportzilla Formula Karting is one of Lahore\'s premier karting venues, featuring a challenging outdoor circuit designed for competitive racing. The track offers an exciting mix of high-speed straights and technical corners, providing the perfect environment for both beginners and experienced racers.',
       details: {
-        length: '1.1 km',
+        length: '800m',
         width: '8-10 meters',
-        corners: 12,
-        surface: 'Asphalt',
-        kartType: '270cc Racing Karts',
+        corners: 13,
+        surface: 'Cemented',
+        kartType: 'Sprint, Championship & Pro Karts',
       },
       videos: [
-        'https://www.youtube.com/embed/dQw4w9WgXcQ',
-        'https://www.youtube.com/embed/dQw4w9WgXcQ',
+        'https://www.youtube.com/embed/0l0YKYczZCc',
+        'https://www.youtube.com/embed/MczLVx0ZN7A',
       ],
       mapLocation: {
-        lat: 31.4697,
-        lng: 74.2728,
-        embedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3403.2!2d74.2728!3d31.4697!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzHCsDI4JzExLjAiTiA3NMKwMTYnMjIuMSJF!5e0!3m2!1sen!2s!4v1234567890',
-      },
+              lat: 31.4265328,
+              lng: 74.4826657,
+              embedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3445.8!2d74.4800854!3d31.4265328!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x391909e81df2bc71%3A0xf87288cf5260450b!2sSportzilla%20Formula%20Karting%20Club%20%26%20Sports%20Arena!5e0!3m2!1sen!2s!4v1700000000000",
+            },
     },
   },
   'apex-autodrome': {
@@ -40,22 +40,23 @@ const TRACK_DATA: Record<string, any> = {
     logo: '/logos/apex.png',
     about: {
       layoutImage: 'https://via.placeholder.com/1200x600?text=Apex+Autodrome+Track+Layout',
-      description: 'Apex Autodrome is a state-of-the-art karting facility in Lahore, featuring a modern track design with excellent safety features. The circuit is known for its flowing layout that rewards smooth driving and racecraft, making it a favorite among local karting enthusiasts.',
+      description: 'Pakistan’s premier indoor Go-Karting & immersive Gaming Arcade. For the first time, we bring together the adrenaline-pumping thrill of the most advanced and high-speed Italian karts - Apex Autodrome strikes the perfect balance between speed and control.',
       details: {
-        length: '1.0 km',
+        length: '500m',
         width: '8-12 meters',
-        corners: 14,
+        corners: 8,
         surface: 'Premium Asphalt',
-        kartType: '270cc Sodikart',
+        kartType: 'TB Italy Karts',
       },
       videos: [
-        'https://www.youtube.com/embed/dQw4w9WgXcQ',
+        'https://www.youtube.com/embed/ymK6WVsTjIk',
+        'https://www.youtube.com/embed/zSNKQYIKRV0',
       ],
       mapLocation: {
-        lat: 31.5204,
-        lng: 74.3587,
-        embedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3402.5!2d74.3587!3d31.5204!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzHCsDMxJzEzLjQiTiA3NMKwMjEnMzEuMyJF!5e0!3m2!1sen!2s!4v1234567890',
-      },
+              lat: 31.3588467,
+              lng: 74.1830835,
+              embedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3448.7!2d74.1805032!3d31.3588467!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3918558572063d93%3A0xb70e74c0053298ef!2sApex%20Autodrome!5e0!3m2!1sen!2s!4v1700000000000",
+            },
     },
   },
 };

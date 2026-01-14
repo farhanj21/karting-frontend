@@ -14,6 +14,7 @@ export async function GET(
     const limit = parseInt(searchParams.get('limit') || '50');
     const search = searchParams.get('search') || '';
     const tier = searchParams.get('tier') || '';
+    const kartType = searchParams.get('kartType') || '';
     const sort = searchParams.get('sort') || 'position';
 
     // Build query
@@ -25,6 +26,10 @@ export async function GET(
 
     if (tier) {
       query.tier = tier;
+    }
+
+    if (kartType) {
+      query.kartType = kartType;
     }
 
     // Build sort

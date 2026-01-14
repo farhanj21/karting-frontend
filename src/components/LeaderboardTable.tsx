@@ -9,9 +9,10 @@ interface LeaderboardTableProps {
   records: LapRecord[];
   loading?: boolean;
   startPosition?: number;
+  showKartType?: boolean;
 }
 
-export default function LeaderboardTable({ records, loading, startPosition = 1 }: LeaderboardTableProps) {
+export default function LeaderboardTable({ records, loading, startPosition = 1, showKartType = false }: LeaderboardTableProps) {
   if (loading) {
     return (
       <div className="space-y-2">
@@ -41,6 +42,11 @@ export default function LeaderboardTable({ records, loading, startPosition = 1 }
             <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
               Driver
             </th>
+            {showKartType && (
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                Kart Type
+              </th>
+            )}
             <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
               Tier
             </th>
@@ -101,6 +107,13 @@ export default function LeaderboardTable({ records, loading, startPosition = 1 }
                   </div>
                 </div>
               </td>
+              {showKartType && (
+                <td className="px-4 py-4 whitespace-nowrap">
+                  <div className="text-sm text-gray-300">
+                    {record.kartType || 'N/A'}
+                  </div>
+                </td>
+              )}
               <td className="px-4 py-4 whitespace-nowrap">
                 <TierBadge tier={record.tier} />
               </td>

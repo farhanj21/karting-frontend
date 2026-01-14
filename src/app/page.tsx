@@ -35,7 +35,7 @@ export default async function HomePage() {
             </div>
             <nav className="flex items-center gap-6">
               <Link
-                href="/tracks/sportzilla"
+                href="/tracks/sportzilla-formula-karting"
                 className="text-gray-400 hover:text-primary transition-colors font-medium"
               >
                 Sportzilla

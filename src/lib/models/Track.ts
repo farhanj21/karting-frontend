@@ -7,6 +7,7 @@ export interface ITrack {
   location: string;
   description?: string;
   logo?: string;
+  kartTypes?: string[];
   stats: {
     totalDrivers: number;
     worldRecord: number;
@@ -56,6 +57,7 @@ const TrackSchema = new Schema<ITrack>(
     location: { type: String, required: true },
     description: { type: String },
     logo: { type: String },
+    kartTypes: [{ type: String }],
     stats: {
       totalDrivers: { type: Number, required: true },
       worldRecord: { type: Number, required: true },

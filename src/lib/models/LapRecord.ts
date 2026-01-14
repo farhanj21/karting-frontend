@@ -9,6 +9,7 @@ export interface ILapRecord {
   driverName: string;
   driverSlug: string;
   profileUrl: string;
+  kartType?: string;
   position: number;
   bestTime: number;
   bestTimeStr: string;
@@ -33,6 +34,7 @@ const LapRecordSchema = new Schema<ILapRecord>(
     driverName: { type: String, required: true },
     driverSlug: { type: String, required: true, index: true },
     profileUrl: { type: String, required: true },
+    kartType: { type: String, index: true },
     position: { type: Number, required: true },
     bestTime: { type: Number, required: true },
     bestTimeStr: { type: String, required: true },
@@ -54,7 +56,8 @@ const LapRecordSchema = new Schema<ILapRecord>(
 LapRecordSchema.index({ trackId: 1, position: 1 });
 LapRecordSchema.index({ trackSlug: 1, position: 1 });
 LapRecordSchema.index({ tier: 1, trackId: 1 });
-LapRecordSchema.index({ trackSlug: 1, driverSlug: 1 }, { unique: true });
+LapRecordSchema.index({ trackSlug: 1, kartType: 1, position: 1 });
+LapRecordSchema.index({ trackSlug: 1, driverSlug: 1, kartType: 1 }, { unique: true });
 
 const LapRecord = models.LapRecord || model<ILapRecord>('LapRecord', LapRecordSchema);
 

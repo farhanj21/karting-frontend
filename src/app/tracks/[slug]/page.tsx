@@ -11,6 +11,7 @@ import LeaderboardTable from '@/components/LeaderboardTable';
 import TierDistributionChart from '@/components/TierDistributionChart';
 import TimeDistributionChart from '@/components/TimeDistributionChart';
 import TierBadge from '@/components/TierBadge';
+import KartTypeSelector from '@/components/KartTypeSelector';
 import { Track, LapRecord, TierDistribution, TimeDistribution } from '@/types';
 import { formatTime, formatGap } from '@/lib/utils';
 
@@ -25,6 +26,7 @@ export default function TrackLeaderboardPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTier, setSelectedTier] = useState('');
+  const [selectedKartType, setSelectedKartType] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(20);
@@ -63,6 +65,10 @@ export default function TrackLeaderboardPage() {
           params.append('tier', selectedTier);
         }
 
+        if (selectedKartType) {
+          params.append('kartType', selectedKartType);
+        }
+
         const response = await fetch(`/api/tracks/${slug}/leaderboard?${params}`);
         const data = await response.json();
 
@@ -78,7 +84,7 @@ export default function TrackLeaderboardPage() {
     }
 
     fetchLeaderboard();
-  }, [slug, searchQuery, selectedTier, page, rowsPerPage]);
+  }, [slug, searchQuery, selectedTier, selectedKartType, page, rowsPerPage]);
 
   // Fetch stats
   useEffect(() => {
@@ -109,6 +115,11 @@ export default function TrackLeaderboardPage() {
       const newTier = tier === prevTier ? '' : tier;
       return newTier;
     });
+    setPage(1);
+  }, []);
+
+  const handleKartTypeChange = useCallback((kartType: string) => {
+    setSelectedKartType(kartType);
     setPage(1);
   }, []);
 
@@ -197,10 +208,21 @@ export default function TrackLeaderboardPage() {
 
         {/* Search and Filters */}
         <div className="bg-surface border border-surfaceHover rounded-lg p-6 mb-8">
-          <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex flex-col gap-4">
             <div className="flex-1">
               <SearchBar onSearch={handleSearch} placeholder="Search drivers..." />
             </div>
+
+            {/* Kart Type Filter */}
+            {track.kartTypes && track.kartTypes.length > 0 && (
+              <KartTypeSelector
+                kartTypes={track.kartTypes}
+                selectedKartType={selectedKartType}
+                onKartTypeChange={handleKartTypeChange}
+              />
+            )}
+
+            {/* Tier Filter */}
             <div className="flex gap-2 flex-wrap">
               <div className="text-sm text-gray-400 flex items-center gap-2">
                 <Filter className="w-4 h-4" />
@@ -247,10 +269,15 @@ export default function TrackLeaderboardPage() {
                 (Tier {selectedTier})
               </span>
             )}
+            {selectedKartType && (
+              <span className="text-sm text-gray-400 font-normal ml-2">
+                ({selectedKartType})
+              </span>
+            )}
           </h2>
 
           {/* Podium - Only show on first page without filters */}
-          {!loading && records.length >= 3 && page === 1 && !searchQuery && !selectedTier && (
+          {!loading && records.length >= 3 && page === 1 && !searchQuery && !selectedTier && !selectedKartType && (
             <div className="bg-gradient-to-b from-surface to-background border border-surfaceHover rounded-xl p-8 mb-6">
               <div className="flex items-center justify-center gap-4 max-w-4xl mx-auto">
                 {/* 2nd Place */}
@@ -319,9 +346,10 @@ export default function TrackLeaderboardPage() {
           {/* Rest of Leaderboard Table */}
           <div className="bg-surface border border-surfaceHover rounded-lg p-6">
             <LeaderboardTable
-              records={page === 1 && !searchQuery && !selectedTier ? records.slice(3) : records}
+              records={page === 1 && !searchQuery && !selectedTier && !selectedKartType ? records.slice(3) : records}
               loading={loading}
-              startPosition={page === 1 && !searchQuery && !selectedTier ? 4 : (page - 1) * rowsPerPage + 1}
+              startPosition={page === 1 && !searchQuery && !selectedTier && !selectedKartType ? 4 : (page - 1) * rowsPerPage + 1}
+              showKartType={!!selectedKartType || (track.kartTypes && track.kartTypes.length > 1)}
             />
 
             {/* Pagination */}

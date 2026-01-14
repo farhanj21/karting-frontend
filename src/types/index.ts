@@ -5,6 +5,7 @@ export interface Track {
   location: string;
   description?: string;
   logo?: string;
+  kartTypes?: string[];
   stats: TrackStats;
   about?: {
     layoutImage?: string;
@@ -58,6 +59,7 @@ export interface LapRecord {
   driverName: string;
   driverSlug: string;
   profileUrl: string;
+  kartType?: string;
   position: number;
   bestTime: number;
   bestTimeStr: string;
@@ -89,6 +91,7 @@ export interface DriverRecord {
   trackId: string;
   trackName: string;
   trackSlug: string;
+  kartType?: string;
   position: number;
   bestTime: number;
   bestTimeStr: string;

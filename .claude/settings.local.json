@@ -16,7 +16,9 @@
       "Bash(dir /s /b \"C:\\\\Users\\\\f-jaf\\\\Desktop\\\\Code\\\\karting-dashboard\\\\src\\\\app\\\\tracks\")",
       "mcp__ide__getDiagnostics",
       "Bash(git show:*)",
-      "Bash(git diff:*)"
+      "Bash(git diff:*)",
+      "Bash(node scripts/add-sr5-kart.js:*)",
+      "Bash(node scripts/check-sr5-records.js:*)"
     ]
   }
 }

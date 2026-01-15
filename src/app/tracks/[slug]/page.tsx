@@ -41,7 +41,11 @@ export default function TrackLeaderboardPage() {
           setTrack(data.track);
           // Set default kart type to the first available kart type
           if (data.track.kartTypes && data.track.kartTypes.length > 0) {
-            setSelectedKartType(data.track.kartTypes[0]);
+            // Filter out LR5 for 2F2F track
+            const availableKartTypes = slug === '2f2f-formula-karting'
+              ? data.track.kartTypes.filter(kt => kt !== 'LR5')
+              : data.track.kartTypes;
+            setSelectedKartType(availableKartTypes[0]);
           }
         }
       } catch (error) {

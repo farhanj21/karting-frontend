@@ -43,7 +43,7 @@ export default function TrackLeaderboardPage() {
           if (data.track.kartTypes && data.track.kartTypes.length > 0) {
             // Filter out LR5 for 2F2F track
             const availableKartTypes = slug === '2f2f-formula-karting'
-              ? data.track.kartTypes.filter(kt => kt !== 'LR5')
+              ? data.track.kartTypes.filter((kt: string) => kt !== 'LR5')
               : data.track.kartTypes;
             setSelectedKartType(availableKartTypes[0]);
           }
@@ -224,7 +224,7 @@ export default function TrackLeaderboardPage() {
               {/* Kart Type Filter */}
               {track.kartTypes && track.kartTypes.length > 0 && (
                 <KartTypeSelector
-                  kartTypes={slug === '2f2f-formula-karting' ? track.kartTypes.filter(kt => kt !== 'LR5') : track.kartTypes}
+                  kartTypes={slug === '2f2f-formula-karting' ? track.kartTypes.filter((kt: string) => kt !== 'LR5') : track.kartTypes}
                   selectedKartType={selectedKartType}
                   onKartTypeChange={handleKartTypeChange}
                 />

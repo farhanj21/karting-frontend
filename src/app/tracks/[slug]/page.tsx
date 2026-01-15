@@ -184,6 +184,21 @@ export default function TrackLeaderboardPage() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* 2F2F Layout Disclaimer */}
+        {(slug === '2f2f-formula-karting' || slug === '2f2f-formula-karting-islamabad') && (
+          <div className="bg-amber-900/20 border border-amber-700/50 rounded-lg p-4 mb-8">
+            <div className="flex items-start gap-3">
+              <div className="text-amber-500 mt-0.5">⚠️</div>
+              <div>
+                <h3 className="text-amber-400 font-semibold text-sm mb-1">Track Layout Notice</h3>
+                <p className="text-amber-200/80 text-sm">
+                  2F2F sometimes varies their track layouts. Some lap times around 50 seconds may reflect a different track configuration.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard

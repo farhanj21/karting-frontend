@@ -2,6 +2,13 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import LapRecord from '@/lib/models/LapRecord';
 
+// Helper function to format seconds to MM:SS
+function formatTimeSimple(seconds: number): string {
+  const minutes = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${minutes}:${secs.toString().padStart(2, '0')}`;
+}
+
 export async function GET(
   request: Request,
   { params }: { params: { slug: string } }
@@ -40,7 +47,7 @@ export async function GET(
 
       if (count > 0) {
         timeDistribution.push({
-          bin: `${(binStart / 60).toFixed(2)}-${(binEnd / 60).toFixed(2)}`,
+          bin: `${formatTimeSimple(binStart)} - ${formatTimeSimple(binEnd)}`,
           minTime: binStart,
           maxTime: binEnd,
           count,

@@ -32,7 +32,7 @@ export default function TrackLeaderboardPage() {
   const [selectedKartType, setSelectedKartType] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(20);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   // Advanced stats state
   const [warZoneData, setWarZoneData] = useState<any>(null);
@@ -48,13 +48,33 @@ export default function TrackLeaderboardPage() {
         const data = await response.json();
         if (data.success) {
           setTrack(data.track);
-          // Set default kart type to the first available kart type
+          // Set default kart type
           if (data.track.kartTypes && data.track.kartTypes.length > 0) {
             // Filter out LR5 for 2F2F track
             const availableKartTypes = slug === '2f2f-formula-karting'
               ? data.track.kartTypes.filter((kt: string) => kt !== 'LR5')
               : data.track.kartTypes;
-            setSelectedKartType(availableKartTypes[0]);
+
+            // Debug log to see what kart types are available
+            console.log('Track slug:', slug);
+            console.log('Available kart types:', availableKartTypes);
+
+            // Set default kart type based on track
+            if (slug === 'sportzilla-formula-karting') {
+              // Try to find Sprint Kart (case-insensitive search)
+              const sprintKart = availableKartTypes.find((kt: string) =>
+                kt.toLowerCase().includes('sprint')
+              );
+              if (sprintKart) {
+                console.log('Setting default to:', sprintKart);
+                setSelectedKartType(sprintKart);
+              } else {
+                console.log('Sprint kart not found, using first:', availableKartTypes[0]);
+                setSelectedKartType(availableKartTypes[0]);
+              }
+            } else {
+              setSelectedKartType(availableKartTypes[0]);
+            }
           }
         }
       } catch (error) {

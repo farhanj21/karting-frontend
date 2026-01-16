@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import WarZone from '@/lib/models/WarZone';
+import WarZone, { IWarZone } from '@/lib/models/WarZone';
 
 export async function GET(
   request: Request,
@@ -22,7 +22,7 @@ export async function GET(
       query.kartType = null;
     }
 
-    const warZone = await WarZone.findOne(query).lean();
+    const warZone = await WarZone.findOne(query).lean() as unknown as IWarZone | null;
 
     if (!warZone) {
       return NextResponse.json({

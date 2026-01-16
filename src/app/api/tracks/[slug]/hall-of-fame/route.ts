@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import WorldRecordHistory from '@/lib/models/WorldRecordHistory';
+import WorldRecordHistory, { IWorldRecordHistory } from '@/lib/models/WorldRecordHistory';
 
 export async function GET(
   request: Request,
@@ -26,7 +26,7 @@ export async function GET(
     // Sort by date broken (ascending) to show chronological progression
     const history = await WorldRecordHistory.find(query)
       .sort({ dateBroken: 1 })
-      .lean();
+      .lean() as unknown as IWorldRecordHistory[];
 
     if (!history || history.length === 0) {
       return NextResponse.json({
@@ -40,7 +40,7 @@ export async function GET(
       success: true,
       trackSlug: params.slug,
       kartType: kartType,
-      hallOfFame: history.map((record: any) => ({
+      hallOfFame: history.map((record) => ({
         driverName: record.driverName,
         driverSlug: record.driverSlug,
         profileUrl: record.profileUrl,

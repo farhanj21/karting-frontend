@@ -43,6 +43,12 @@ export default function TrackLeaderboardPage() {
   // Ref for scrolling to leaderboard
   const leaderboardRef = useRef<HTMLDivElement>(null);
 
+  // Time range modal state
+  const [timeRangeModalOpen, setTimeRangeModalOpen] = useState(false);
+  const [timeRangeDrivers, setTimeRangeDrivers] = useState<LapRecord[]>([]);
+  const [timeRangeInfo, setTimeRangeInfo] = useState({ minTime: 0, maxTime: 0, bin: '' });
+  const [timeRangeLoading, setTimeRangeLoading] = useState(false);
+
   // Fetch track data
   useEffect(() => {
     async function fetchTrack() {
@@ -230,6 +236,55 @@ export default function TrackLeaderboardPage() {
     setRowsPerPage(value);
     setPage(1);
   }, []);
+
+  const handleTimeRangeClick = useCallback(async (minTime: number, maxTime: number, bin: string) => {
+    setTimeRangeInfo({ minTime, maxTime, bin });
+    setTimeRangeModalOpen(true);
+    setTimeRangeLoading(true);
+
+    try {
+      const params = new URLSearchParams({
+        minTime: minTime.toString(),
+        maxTime: maxTime.toString(),
+      });
+
+      if (selectedKartType) {
+        params.append('kartType', selectedKartType);
+      }
+
+      const response = await fetch(`/api/tracks/${slug}/time-range?${params}`);
+      const data = await response.json();
+
+      if (data.success) {
+        setTimeRangeDrivers(data.records);
+      }
+    } catch (error) {
+      console.error('Error fetching time range drivers:', error);
+    } finally {
+      setTimeRangeLoading(false);
+    }
+  }, [slug, selectedKartType]);
+
+  // Handle escape key to close modal and prevent body scroll
+  useEffect(() => {
+    if (timeRangeModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && timeRangeModalOpen) {
+        setTimeRangeModalOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => {
+      window.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [timeRangeModalOpen]);
 
   if (!track) {
     return (
@@ -616,13 +671,102 @@ export default function TrackLeaderboardPage() {
 
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <TimeDistributionChart data={timeDistribution} />
+          <TimeDistributionChart
+            data={timeDistribution}
+            onTimeRangeClick={handleTimeRangeClick}
+          />
           <TierDistributionChart
             data={tierDistribution}
             onTierClick={handleTierFilter}
             selectedTier={selectedTier}
           />
         </div>
+
+        {/* Time Range Modal */}
+        {timeRangeModalOpen && (
+          <div
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setTimeRangeModalOpen(false)}
+          >
+            <div
+              className="bg-surface border border-surfaceHover rounded-xl max-w-4xl w-full max-h-[80vh] overflow-hidden flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div className="p-6 border-b border-surfaceHover">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-2xl font-display font-bold text-white">
+                      Drivers in Time Range
+                      {!timeRangeLoading && timeRangeDrivers.length > 0 && (
+                        <span className="ml-3 text-lg text-gray-400 font-normal">
+                          ({timeRangeDrivers.length})
+                        </span>
+                      )}
+                    </h2>
+                    <p className="text-sm text-gray-400 mt-1">
+                      {timeRangeInfo.bin}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setTimeRangeModalOpen(false)}
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* Modal Content */}
+              <div className="flex-1 overflow-y-auto p-6">
+                {timeRangeLoading ? (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                  </div>
+                ) : timeRangeDrivers.length > 0 ? (
+                  <div className="space-y-2">
+                    {timeRangeDrivers.map((record) => (
+                      <div
+                        key={`${record.driverSlug}-${record.date}`}
+                        className="flex items-center justify-between p-4 bg-background rounded-lg hover:bg-surfaceHover transition-colors"
+                      >
+                        <div className="flex items-center gap-4 flex-1">
+                          <div className="text-sm font-semibold text-gray-500 w-12">
+                            #{record.position}
+                          </div>
+                          <div className="flex-1">
+                            <a
+                              href={record.profileUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-white font-semibold hover:text-primary transition-colors"
+                            >
+                              {record.driverName}
+                            </a>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-xl font-mono font-bold text-accent">
+                              {record.bestTimeStr}
+                            </div>
+                          </div>
+                          <div>
+                            <TierBadge tier={record.tier} size="sm" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12 text-gray-400">
+                    No drivers found in this time range
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

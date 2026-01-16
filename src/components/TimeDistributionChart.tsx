@@ -6,16 +6,26 @@ import { formatTime } from '@/lib/utils';
 
 interface TimeDistributionChartProps {
   data: TimeDistribution[];
+  onTimeRangeClick?: (minTime: number, maxTime: number, bin: string) => void;
 }
 
-export default function TimeDistributionChart({ data }: TimeDistributionChartProps) {
+export default function TimeDistributionChart({ data, onTimeRangeClick }: TimeDistributionChartProps) {
+  const handleChartClick = (data: any) => {
+    if (data && data.activePayload && data.activePayload.length > 0) {
+      const payload = data.activePayload[0].payload;
+      onTimeRangeClick?.(payload.minTime, payload.maxTime, payload.bin);
+    }
+  };
   return (
     <div className="bg-surface border border-surfaceHover rounded-lg p-6">
-      <h3 className="text-xl font-display font-bold text-white mb-6">
-        Time Distribution
-      </h3>
+      <div className="mb-6">
+        <h3 className="text-xl font-display font-bold text-white">
+          Time Distribution
+        </h3>
+        <p className="text-xs text-gray-500 mt-1">Click on a bar to see drivers in that time range</p>
+      </div>
       <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={data}>
+        <BarChart data={data} onClick={handleChartClick}>
           <CartesianGrid strokeDasharray="3 3" stroke="#252525" />
           <XAxis
             dataKey="bin"
@@ -37,6 +47,12 @@ export default function TimeDistributionChart({ data }: TimeDistributionChartPro
               borderRadius: '8px',
               color: '#ffffff',
             }}
+            itemStyle={{
+              color: '#ffffff',
+            }}
+            labelStyle={{
+              color: '#ffffff',
+            }}
             formatter={(value: number, name: string, props: any) => {
               if (name === 'count') {
                 const minTime = formatTime(props.payload.minTime);
@@ -49,7 +65,7 @@ export default function TimeDistributionChart({ data }: TimeDistributionChartPro
               return [value, name];
             }}
           />
-          <Bar dataKey="count" fill="#ff3333" radius={[8, 8, 0, 0]} />
+          <Bar dataKey="count" fill="#ff3333" radius={[8, 8, 0, 0]} cursor="pointer" />
         </BarChart>
       </ResponsiveContainer>
       <p className="text-xs text-gray-400 mt-4 text-center">

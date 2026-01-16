@@ -19,10 +19,10 @@ const TIER_COLORS: Record<string, string> = {
 };
 
 export default function TierDistributionChart({ data, onTierClick, selectedTier }: TierDistributionChartProps) {
-  const handleChartClick = (data: any) => {
-    if (data && data.activePayload && data.activePayload.length > 0) {
-      const tier = data.activePayload[0].payload.tier;
-      onTierClick?.(tier);
+  const handleChartClick = (event: any) => {
+    // Check if we have activeLabel (the tier on X-axis that was clicked)
+    if (event && event.activeLabel) {
+      onTierClick?.(event.activeLabel);
     }
   };
 
@@ -67,7 +67,6 @@ export default function TierDistributionChart({ data, onTierClick, selectedTier 
           <Bar
             dataKey="count"
             radius={[8, 8, 0, 0]}
-            onClick={(data) => onTierClick?.(data.tier)}
             cursor="pointer"
           >
             {data.map((entry, index) => (

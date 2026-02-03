@@ -144,7 +144,7 @@ export default async function HomePage() {
             <div className="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mx-auto mb-4">
               <Users className="w-6 h-6 text-accent" />
             </div>
-            <h3 className="font-display font-semibold text-white mb-2">Live Leaderboards</h3>
+            <h3 className="font-display font-semibold text-white mb-2">Leaderboards</h3>
             <p className="text-sm text-gray-400">Real-time rankings with search and filters</p>
           </div>
 

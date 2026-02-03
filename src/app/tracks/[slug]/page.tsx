@@ -154,11 +154,12 @@ export default function TrackLeaderboardPage() {
   // Fetch advanced stats (war zone, hall of fame, difficulty wall)
   useEffect(() => {
     async function fetchAdvancedStats() {
-      if (!selectedKartType) return;
+      // Skip if track has kart types but none selected yet
+      if (track?.kartTypes && track.kartTypes.length > 0 && !selectedKartType) return;
 
       setAdvancedStatsLoading(true);
       try {
-        const kartTypeParam = `?kartType=${selectedKartType}`;
+        const kartTypeParam = selectedKartType ? `?kartType=${selectedKartType}` : '';
 
         // Fetch all three endpoints in parallel
         const [warZoneRes, hallOfFameRes, difficultyWallRes] = await Promise.all([
@@ -203,7 +204,7 @@ export default function TrackLeaderboardPage() {
     }
 
     fetchAdvancedStats();
-  }, [slug, selectedKartType]);
+  }, [slug, selectedKartType, track]);
 
   const handleSearch = useCallback((query: string) => {
     setSearchQuery(query);
@@ -614,7 +615,7 @@ export default function TrackLeaderboardPage() {
         </div>
 
         {/* Advanced Stats Sections */}
-        {selectedKartType && (
+        {(selectedKartType || (!track?.kartTypes || track.kartTypes.length === 0)) && (
           <>
             {/* Hall of Fame */}
             {hallOfFameData.length > 0 && !advancedStatsLoading && (
@@ -624,7 +625,7 @@ export default function TrackLeaderboardPage() {
                   <h2 className="text-xl font-display font-bold text-white">Hall of Fame</h2>
                 </div>
                 <p className="text-sm text-gray-400 mb-6">
-                  Track record history for {selectedKartType}
+                  {selectedKartType ? `Track record history for ${selectedKartType}` : 'Track record history'}
                 </p>
                 <HallOfFameTimeline records={hallOfFameData} />
               </div>

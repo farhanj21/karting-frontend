@@ -48,6 +48,10 @@ export default function TrackLeaderboardPage() {
   const [timeRangeDrivers, setTimeRangeDrivers] = useState<LapRecord[]>([]);
   const [timeRangeInfo, setTimeRangeInfo] = useState({ minTime: 0, maxTime: 0, bin: '' });
   const [timeRangeLoading, setTimeRangeLoading] = useState(false);
+  const [timeRangePage, setTimeRangePage] = useState(1);
+  const [timeRangeHasMore, setTimeRangeHasMore] = useState(false);
+  const [timeRangeTotalCount, setTimeRangeTotalCount] = useState(0);
+  const [timeRangeLoadingMore, setTimeRangeLoadingMore] = useState(false);
 
   // Fetch track data
   useEffect(() => {
@@ -242,11 +246,14 @@ export default function TrackLeaderboardPage() {
     setTimeRangeInfo({ minTime, maxTime, bin });
     setTimeRangeModalOpen(true);
     setTimeRangeLoading(true);
+    setTimeRangePage(1);
 
     try {
       const params = new URLSearchParams({
         minTime: minTime.toString(),
         maxTime: maxTime.toString(),
+        page: '1',
+        limit: '100',
       });
 
       if (selectedKartType) {
@@ -258,6 +265,8 @@ export default function TrackLeaderboardPage() {
 
       if (data.success) {
         setTimeRangeDrivers(data.records);
+        setTimeRangeHasMore(data.hasMore || false);
+        setTimeRangeTotalCount(data.totalCount || data.count);
       }
     } catch (error) {
       console.error('Error fetching time range drivers:', error);
@@ -265,6 +274,71 @@ export default function TrackLeaderboardPage() {
       setTimeRangeLoading(false);
     }
   }, [slug, selectedKartType]);
+
+  const handleDifficultyWallClick = useCallback(async (timeInSeconds: number) => {
+    const formattedTime = formatTime(timeInSeconds);
+    setTimeRangeInfo({ minTime: timeInSeconds, maxTime: timeInSeconds + 1, bin: formattedTime });
+    setTimeRangeModalOpen(true);
+    setTimeRangeLoading(true);
+    setTimeRangePage(1);
+
+    try {
+      const params = new URLSearchParams({
+        minTime: timeInSeconds.toString(),
+        maxTime: (timeInSeconds + 1).toString(),
+        page: '1',
+        limit: '100',
+      });
+
+      if (selectedKartType) {
+        params.append('kartType', selectedKartType);
+      }
+
+      const response = await fetch(`/api/tracks/${slug}/time-range?${params}`);
+      const data = await response.json();
+
+      if (data.success) {
+        setTimeRangeDrivers(data.records);
+        setTimeRangeHasMore(data.hasMore || false);
+        setTimeRangeTotalCount(data.totalCount || data.count);
+      }
+    } catch (error) {
+      console.error('Error fetching time range drivers:', error);
+    } finally {
+      setTimeRangeLoading(false);
+    }
+  }, [slug, selectedKartType]);
+
+  const handleLoadMoreTimeRange = useCallback(async () => {
+    setTimeRangeLoadingMore(true);
+    const nextPage = timeRangePage + 1;
+
+    try {
+      const params = new URLSearchParams({
+        minTime: timeRangeInfo.minTime.toString(),
+        maxTime: timeRangeInfo.maxTime.toString(),
+        page: nextPage.toString(),
+        limit: '100',
+      });
+
+      if (selectedKartType) {
+        params.append('kartType', selectedKartType);
+      }
+
+      const response = await fetch(`/api/tracks/${slug}/time-range?${params}`);
+      const data = await response.json();
+
+      if (data.success) {
+        setTimeRangeDrivers(prev => [...prev, ...data.records]);
+        setTimeRangeHasMore(data.hasMore || false);
+        setTimeRangePage(nextPage);
+      }
+    } catch (error) {
+      console.error('Error loading more drivers:', error);
+    } finally {
+      setTimeRangeLoadingMore(false);
+    }
+  }, [slug, selectedKartType, timeRangePage, timeRangeInfo]);
 
   // Handle escape key to close modal and prevent body scroll
   useEffect(() => {
@@ -656,6 +730,7 @@ export default function TrackLeaderboardPage() {
                   data={difficultyWallData}
                   warZoneStart={warZoneData?.timeStart}
                   warZoneEnd={warZoneData?.timeEnd}
+                  onTimeClick={handleDifficultyWallClick}
                 />
               </div>
             )}
@@ -699,9 +774,9 @@ export default function TrackLeaderboardPage() {
                   <div>
                     <h2 className="text-2xl font-display font-bold text-white">
                       Drivers in Time Range
-                      {!timeRangeLoading && timeRangeDrivers.length > 0 && (
+                      {!timeRangeLoading && timeRangeTotalCount > 0 && (
                         <span className="ml-3 text-lg text-gray-400 font-normal">
-                          ({timeRangeDrivers.length})
+                          ({timeRangeDrivers.length} of {timeRangeTotalCount})
                         </span>
                       )}
                     </h2>
@@ -727,38 +802,58 @@ export default function TrackLeaderboardPage() {
                     <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
                   </div>
                 ) : timeRangeDrivers.length > 0 ? (
-                  <div className="space-y-2">
-                    {timeRangeDrivers.map((record) => (
-                      <div
-                        key={`${record.driverSlug}-${record.date}`}
-                        className="flex items-center justify-between p-4 bg-background rounded-lg hover:bg-surfaceHover transition-colors"
-                      >
-                        <div className="flex items-center gap-4 flex-1">
-                          <div className="text-sm font-semibold text-gray-500 w-12">
-                            #{record.position}
-                          </div>
-                          <div className="flex-1">
-                            <a
-                              href={record.profileUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-white font-semibold hover:text-primary transition-colors"
-                            >
-                              {record.driverName}
-                            </a>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-xl font-mono font-bold text-accent">
-                              {record.bestTimeStr}
+                  <>
+                    <div className="space-y-2">
+                      {timeRangeDrivers.map((record) => (
+                        <div
+                          key={`${record.driverSlug}-${record.date}`}
+                          className="flex items-center justify-between p-4 bg-background rounded-lg hover:bg-surfaceHover transition-colors"
+                        >
+                          <div className="flex items-center gap-4 flex-1">
+                            <div className="text-sm font-semibold text-gray-500 w-12">
+                              #{record.position}
+                            </div>
+                            <div className="flex-1">
+                              <a
+                                href={record.profileUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-white font-semibold hover:text-primary transition-colors"
+                              >
+                                {record.driverName}
+                              </a>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-xl font-mono font-bold text-accent">
+                                {record.bestTimeStr}
+                              </div>
+                            </div>
+                            <div>
+                              <TierBadge tier={record.tier} size="sm" />
                             </div>
                           </div>
-                          <div>
-                            <TierBadge tier={record.tier} size="sm" />
-                          </div>
                         </div>
+                      ))}
+                    </div>
+                    {timeRangeHasMore && (
+                      <div className="mt-4 text-center">
+                        <button
+                          onClick={handleLoadMoreTimeRange}
+                          disabled={timeRangeLoadingMore}
+                          className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+                        >
+                          {timeRangeLoadingMore ? (
+                            <span className="flex items-center gap-2">
+                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                              Loading...
+                            </span>
+                          ) : (
+                            `Load More (${timeRangeTotalCount - timeRangeDrivers.length} remaining)`
+                          )}
+                        </button>
                       </div>
-                    ))}
-                  </div>
+                    )}
+                  </>
                 ) : (
                   <div className="text-center py-12 text-gray-400">
                     No drivers found in this time range

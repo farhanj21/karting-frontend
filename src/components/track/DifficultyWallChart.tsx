@@ -11,6 +11,8 @@ interface DifficultyWallChartProps {
   data: DifficultyData[];
   warZoneStart?: number;
   warZoneEnd?: number;
+  onTimeClick?: (timeInSeconds: number) => void;
+  selectedTime?: number;
 }
 
 const formatTime = (timeInSeconds: number): string => {
@@ -38,6 +40,8 @@ export default function DifficultyWallChart({
   data,
   warZoneStart,
   warZoneEnd,
+  onTimeClick,
+  selectedTime,
 }: DifficultyWallChartProps) {
   // Determine if a bar is in the war zone
   const isInWarZone = (timeInSeconds: number) => {
@@ -45,13 +49,23 @@ export default function DifficultyWallChart({
     return timeInSeconds >= Math.floor(warZoneStart) && timeInSeconds <= Math.floor(warZoneEnd);
   };
 
+  const handleChartClick = (data: any) => {
+    if (data && data.activePayload && data.activePayload.length > 0) {
+      const payload = data.activePayload[0].payload;
+      onTimeClick?.(payload.timeInSeconds);
+    }
+  };
+
   return (
     <div className="w-full">
+      <p className="text-xs text-gray-500 mb-4">Click on a bar to filter drivers by lap time</p>
       <div className="h-[400px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={data}
             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            onClick={handleChartClick}
+            barCategoryGap="10%"
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.3} />
             <XAxis
@@ -74,7 +88,7 @@ export default function DifficultyWallChart({
               }}
             />
             <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(99, 102, 241, 0.1)' }} />
-            <Bar dataKey="count" radius={[4, 4, 0, 0]}>
+            <Bar dataKey="count" radius={[4, 4, 0, 0]} cursor="pointer">
               {data.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
@@ -83,6 +97,7 @@ export default function DifficultyWallChart({
                       ? 'url(#warZoneGradient)'
                       : 'url(#normalGradient)'
                   }
+                  opacity={selectedTime !== undefined && selectedTime !== entry.timeInSeconds ? 0.3 : 1}
                 />
               ))}
             </Bar>

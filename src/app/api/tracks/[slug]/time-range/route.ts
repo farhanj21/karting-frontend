@@ -13,6 +13,8 @@ export async function GET(
     const minTime = parseFloat(searchParams.get('minTime') || '0');
     const maxTime = parseFloat(searchParams.get('maxTime') || '999999');
     const kartType = searchParams.get('kartType') || '';
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '100');
 
     // Build query
     const query: any = {
@@ -24,16 +26,23 @@ export async function GET(
       query.kartType = kartType;
     }
 
-    // Fetch records in time range
+    // Get total count
+    const totalCount = await LapRecord.countDocuments(query);
+
+    // Fetch records in time range with pagination
     const records = await LapRecord.find(query)
       .sort({ bestTime: 1 })
-      .limit(100) // Limit to prevent too many results
+      .skip((page - 1) * limit)
+      .limit(limit)
       .lean();
 
     return NextResponse.json({
       success: true,
       records,
       count: records.length,
+      totalCount,
+      hasMore: page * limit < totalCount,
+      currentPage: page,
     });
   } catch (error) {
     console.error('Error fetching time range drivers:', error);

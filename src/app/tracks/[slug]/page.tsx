@@ -692,7 +692,8 @@ export default function TrackLeaderboardPage() {
         {(selectedKartType || (!track?.kartTypes || track.kartTypes.length === 0)) && (
           <>
             {/* Hall of Fame */}
-            {hallOfFameData.length > 0 && !advancedStatsLoading && (
+            {hallOfFameData.length > 0 && !advancedStatsLoading && 
+             !['2f2f-formula-karting', '2f2f-formula-karting-islamabad', 'omni-karting-circuit'].includes(slug) && (
               <div className="bg-surface border border-surfaceHover rounded-xl p-6 mb-8">
                 <div className="flex items-center gap-2 mb-4">
                   <Award className="w-5 h-5 text-primary" />

@@ -140,7 +140,8 @@ export default function TrackLeaderboardPage() {
   useEffect(() => {
     async function fetchStats() {
       try {
-        const response = await fetch(`/api/tracks/${slug}/stats`);
+        const kartTypeParam = selectedKartType ? `?kartType=${selectedKartType}` : '';
+        const response = await fetch(`/api/tracks/${slug}/stats${kartTypeParam}`);
         const data = await response.json();
 
         if (data.success) {
@@ -153,7 +154,7 @@ export default function TrackLeaderboardPage() {
     }
 
     fetchStats();
-  }, [slug]);
+  }, [slug, selectedKartType]);
 
   // Fetch advanced stats (war zone, hall of fame, difficulty wall)
   useEffect(() => {
@@ -372,6 +373,11 @@ export default function TrackLeaderboardPage() {
     );
   }
 
+  // Determine which stats to show
+  const displayStats = (selectedKartType && track.statsByKartType?.[selectedKartType]) 
+    ? track.statsByKartType[selectedKartType] 
+    : track.stats;
+
   return (
     <div className="min-h-screen">
       {/* Header */}
@@ -428,25 +434,25 @@ export default function TrackLeaderboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
             title="Total Drivers"
-            value={track.stats.totalDrivers.toLocaleString()}
+            value={displayStats.totalDrivers.toLocaleString()}
             icon={Users}
             iconColor="text-primary"
           />
           <StatCard
             title="Top 1% Time"
-            value={formatTime(track.stats.top1Percent)}
+            value={formatTime(displayStats.top1Percent)}
             icon={TrendingUp}
             iconColor="text-secondary"
           />
           <StatCard
             title="Median Time"
-            value={formatTime(track.stats.median)}
+            value={formatTime(displayStats.median)}
             icon={Clock}
             iconColor="text-tierC"
           />
           <StatCard
             title="Mean Time"
-            value={track.stats.mean ? formatTime(track.stats.mean) : 'N/A'}
+            value={displayStats.mean ? formatTime(displayStats.mean) : 'N/A'}
             icon={Clock}
             iconColor="text-tierB"
           />
@@ -625,6 +631,7 @@ export default function TrackLeaderboardPage() {
               records={page === 1 && !searchQuery && !selectedTier ? records.slice(3) : records}
               loading={loading}
               showKartType={track.kartTypes && track.kartTypes.length > 1}
+              kartTypeLabel={track.kartTypes?.some(t => t.toLowerCase().includes('track')) ? 'Track Layout' : 'Kart Type'}
             />
 
             {/* Pagination */}

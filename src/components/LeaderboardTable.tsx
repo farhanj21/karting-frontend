@@ -10,9 +10,15 @@ interface LeaderboardTableProps {
   records: LapRecord[];
   loading?: boolean;
   showKartType?: boolean;
+  kartTypeLabel?: string;
 }
 
-export default function LeaderboardTable({ records, loading, showKartType = false }: LeaderboardTableProps) {
+export default function LeaderboardTable({ 
+  records, 
+  loading, 
+  showKartType = false,
+  kartTypeLabel = 'Kart Type' 
+}: LeaderboardTableProps) {
   if (loading) {
     return (
       <>
@@ -55,7 +61,7 @@ export default function LeaderboardTable({ records, loading, showKartType = fals
               </th>
               {showKartType && (
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                  Kart Type
+                  {kartTypeLabel}
                 </th>
               )}
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">

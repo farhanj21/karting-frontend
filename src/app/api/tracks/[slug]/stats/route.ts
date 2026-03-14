@@ -16,9 +16,17 @@ export async function GET(
   try {
     await connectDB();
 
+    const { searchParams } = new URL(request.url);
+    const kartType = searchParams.get('kartType');
+
+    const matchQuery: any = { trackSlug: params.slug };
+    if (kartType) {
+      matchQuery.kartType = kartType;
+    }
+
     // Get tier distribution
     const tierDistribution = await LapRecord.aggregate([
-      { $match: { trackSlug: params.slug } },
+      { $match: matchQuery },
       {
         $group: {
           _id: '$tier',
@@ -29,34 +37,52 @@ export async function GET(
     ]);
 
     // Get time distribution (bins)
-    const times = await LapRecord.find({ trackSlug: params.slug })
+    const times = await LapRecord.find(matchQuery)
       .select('bestTime')
       .lean();
+
+    if (times.length === 0) {
+      return NextResponse.json({
+        success: true,
+        tierDistribution: [],
+        timeDistribution: [],
+      });
+    }
 
     const timeValues = times.map((t) => t.bestTime);
     const minTime = Math.min(...timeValues);
     const maxTime = Math.max(...timeValues);
-    const binCount = 20;
+    const binCount = Math.min(20, timeValues.length);
     const binSize = (maxTime - minTime) / binCount;
 
     const timeDistribution = [];
-    for (let i = 0; i < binCount; i++) {
-      const binStart = minTime + i * binSize;
-      const binEnd = binStart + binSize;
-      const count = timeValues.filter((t) => t >= binStart && t < binEnd).length;
+    if (binSize > 0) {
+      for (let i = 0; i < binCount; i++) {
+        const binStart = minTime + i * binSize;
+        const binEnd = binStart + binSize;
+        const count = timeValues.filter((t) => t >= binStart && (i === binCount - 1 ? t <= binEnd : t < binEnd)).length;
 
-      if (count > 0) {
-        timeDistribution.push({
-          bin: `${formatTimeSimple(binStart)} - ${formatTimeSimple(binEnd)}`,
-          minTime: binStart,
-          maxTime: binEnd,
-          count,
-        });
+        if (count > 0) {
+          timeDistribution.push({
+            bin: `${formatTimeSimple(binStart)} - ${formatTimeSimple(binEnd)}`,
+            minTime: binStart,
+            maxTime: binEnd,
+            count,
+          });
+        }
       }
+    } else {
+      // All times are the same
+      timeDistribution.push({
+        bin: formatTimeSimple(minTime),
+        minTime,
+        maxTime,
+        count: timeValues.length,
+      });
     }
 
     // Calculate total for percentages
-    const total = await LapRecord.countDocuments({ trackSlug: params.slug });
+    const total = times.length;
 
     const tierDistributionWithPercentage = tierDistribution.map((item) => ({
       tier: item._id,

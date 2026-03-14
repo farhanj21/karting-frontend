@@ -28,6 +28,7 @@ export interface ITrack {
     };
     lastUpdated: Date;
   };
+  statsByKartType?: Record<string, any>;
   about?: {
     layoutImage?: string;
     layoutImages?: Array<{
@@ -82,6 +83,7 @@ const TrackSchema = new Schema<ITrack>(
       },
       lastUpdated: { type: Date, default: Date.now },
     },
+    statsByKartType: { type: Map, of: Schema.Types.Mixed },
     about: {
       layoutImage: { type: String },
       layoutImages: [{

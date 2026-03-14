@@ -7,6 +7,7 @@ export interface Track {
   logo?: string;
   kartTypes?: string[];
   stats: TrackStats;
+  statsByKartType?: Record<string, TrackStats>;
   about?: {
     layoutImage?: string;
     layoutImages?: Array<{

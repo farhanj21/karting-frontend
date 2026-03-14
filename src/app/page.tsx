@@ -196,7 +196,11 @@ export default async function HomePage() {
 
                 {track.kartRecords && track.kartRecords.length > 0 ? (
                   <div className="space-y-4">
-                    <div className="text-sm text-gray-400 mb-2">Track Records by Kart Type:</div>
+                    <div className="text-sm text-gray-400 mb-2">
+                      {track.kartTypes?.some(t => t.toLowerCase().includes('track')) 
+                        ? 'Track Records by Layout:' 
+                        : 'Track Records by Kart Type:'}
+                    </div>
                     <div className="grid grid-cols-1 gap-3">
                       {track.kartRecords.map((kartRecord) => (
                         <div key={kartRecord.kartType} className="bg-background/50 rounded-lg p-3 border border-surfaceHover">
@@ -252,7 +256,7 @@ export default async function HomePage() {
       <footer className="border-t border-surface mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center text-gray-400 text-sm">
-            <p>Data sourced from RaceFacer • Updated to 17th February 2026</p>
+            <p>Data sourced from RaceFacer • Updated to 14th March 2026</p>
           </div>
         </div>
       </footer>

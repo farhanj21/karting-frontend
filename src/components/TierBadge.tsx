@@ -7,9 +7,9 @@ interface TierBadgeProps {
 
 export default function TierBadge({ tier, size = 'md' }: TierBadgeProps) {
   const sizeClasses = {
-    sm: 'px-1.5 py-0.5 text-xs',
-    md: 'px-2 py-1 text-sm',
-    lg: 'px-3 py-1.5 text-base',
+    sm: 'px-1.5 py-0.5 text-[11px]',
+    md: 'px-2 py-0.5 text-xs',
+    lg: 'px-2.5 py-1 text-sm',
   };
 
   return (

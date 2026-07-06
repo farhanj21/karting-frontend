@@ -19,43 +19,35 @@ export default function WarZoneCard({ timeStart, timeEnd, driverCount }: WarZone
   const timeRange = timeEnd - timeStart;
 
   return (
-    <div className="bg-gradient-to-br from-orange-500/10 to-red-500/10 border-2 border-orange-500/30 rounded-xl p-4">
-      <div className="flex items-center gap-6">
+    <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-5">
+      <div className="flex flex-wrap items-center gap-x-10 gap-y-4">
         {/* Icon and Title */}
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-orange-500/20 rounded-lg shrink-0">
-            <Flame className="w-5 h-5 text-orange-500" />
-          </div>
-          <h3 className="text-lg font-display font-bold text-white whitespace-nowrap">THE WAR ZONE</h3>
+        <div className="flex items-center gap-2.5">
+          <Flame className="h-4 w-4 shrink-0 text-amber-400" />
+          <h3 className="whitespace-nowrap text-sm font-semibold tracking-tight text-zinc-100">
+            The War Zone
+          </h3>
         </div>
-
-        {/* Divider */}
-        <div className="hidden sm:block h-12 w-px bg-orange-500/20" />
 
         {/* Time Range */}
         <div>
-          <div className="text-xs text-gray-400 mb-1">Time Range</div>
-          <div className="text-lg font-bold text-orange-400 whitespace-nowrap">
-            {formatTime(timeStart)} - {formatTime(timeEnd)}
-          </div>
+          <p className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">Time Range</p>
+          <p className="mt-0.5 whitespace-nowrap font-mono text-sm tabular-nums text-amber-300">
+            {formatTime(timeStart)} – {formatTime(timeEnd)}
+          </p>
         </div>
-
-        {/* Divider */}
-        <div className="hidden md:block h-12 w-px bg-orange-500/20" />
 
         {/* Drivers Count */}
         <div>
-          <div className="text-xs text-gray-400 mb-1">Drivers Stuck</div>
-          <div className="text-xl font-bold text-red-400">{driverCount} racers</div>
+          <p className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">Drivers Stuck</p>
+          <p className="mt-0.5 text-sm font-semibold tabular-nums text-zinc-100">{driverCount} racers</p>
         </div>
 
         {/* Info Text */}
-        <div className="hidden lg:flex items-center flex-1 ml-4">
-          <p className="text-sm text-gray-300">
-            Breaking out of this <span className="font-bold text-orange-400">{timeRange.toFixed(1)}s</span> window moves you past{' '}
-            <span className="font-bold text-orange-400">{driverCount} drivers!</span>
-          </p>
-        </div>
+        <p className="hidden min-w-0 flex-1 text-sm text-zinc-500 lg:block">
+          Breaking out of this <span className="font-medium text-amber-300">{timeRange.toFixed(1)}s</span> window moves you past{' '}
+          <span className="font-medium text-amber-300">{driverCount} drivers</span>.
+        </p>
       </div>
     </div>
   );

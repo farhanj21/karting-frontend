@@ -1,6 +1,6 @@
 'use client';
 
-import { Settings2, Car } from 'lucide-react';
+import { Settings2, Car, ChevronDown } from 'lucide-react';
 
 interface KartTypeSelectorProps {
   kartTypes: string[];
@@ -21,52 +21,48 @@ export default function KartTypeSelector({
   // Determine if this is a track configuration or actual kart types
   const isTrackConfig = kartTypes.some(t => t.toLowerCase().includes('track'));
 
-  // If it's a track layout (like Apex), use the new Dropdown
+  // If it's a track layout (like Apex), use the Dropdown
   if (isTrackConfig) {
     return (
       <div className="flex items-center gap-3">
-        <div className="text-sm text-gray-400 flex items-center gap-2 whitespace-nowrap">
-          <Settings2 className="w-4 h-4 text-primary" />
-          <span>Track Layout:</span>
+        <div className="flex items-center gap-1.5 whitespace-nowrap text-xs text-zinc-500">
+          <Settings2 className="h-3.5 w-3.5" />
+          <span>Track layout</span>
         </div>
-        <div className="relative group min-w-[160px]">
+        <div className="relative min-w-[160px]">
           <select
             value={selectedKartType}
             onChange={(e) => onKartTypeChange(e.target.value)}
-            className="w-full bg-surfaceHover hover:bg-surface text-white text-sm font-semibold rounded-lg px-4 py-2 border border-surfaceHover hover:border-primary/50 focus:border-primary focus:outline-none transition-all cursor-pointer appearance-none"
+            className="h-9 w-full cursor-pointer appearance-none rounded-lg border bg-background/50 px-3 pr-8 text-sm font-medium text-zinc-100 transition-colors duration-150 focus:border-accent/60 focus:outline-none"
           >
             {kartTypes.map((type) => (
-              <option key={type} value={type} className="bg-surface text-white">
+              <option key={type} value={type} className="bg-surface text-zinc-100">
                 {type}
               </option>
             ))}
           </select>
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-primary transition-colors">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </div>
+          <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
         </div>
       </div>
     );
   }
 
-  // Otherwise, use the original Button Selector (for Kart Types)
+  // Otherwise, use the Button Selector (for Kart Types)
   return (
-    <div className="flex items-center gap-2 flex-wrap">
-      <div className="text-sm text-gray-400 flex items-center gap-2 mr-2">
-        <Car className="w-4 h-4" />
-        <span>Kart Type:</span>
+    <div className="flex flex-wrap items-center gap-2">
+      <div className="mr-1 flex items-center gap-1.5 text-xs text-zinc-500">
+        <Car className="h-3.5 w-3.5" />
+        <span>Kart type</span>
       </div>
       {kartTypes.map((type) => (
         <button
           type="button"
           key={type}
           onClick={() => onKartTypeChange(type)}
-          className={`px-3 py-1.5 rounded-lg text-xs md:text-sm font-semibold transition-all ${
+          className={`h-8 rounded-full border px-3 text-xs font-medium transition-colors duration-150 ${
             selectedKartType === type
-              ? 'bg-primary text-white shadow-lg shadow-primary/20'
-              : 'bg-surfaceHover text-gray-400 hover:bg-surface hover:text-white'
+              ? 'border-transparent bg-accent-strong text-white'
+              : 'text-zinc-400 hover:border-zinc-600 hover:text-zinc-100'
           }`}
         >
           {type}

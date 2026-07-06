@@ -17,10 +17,10 @@ export default function KartTypeSelector({
     <div className="flex flex-wrap gap-2">
       <button
         onClick={() => onKartTypeChange(null)}
-        className={`px-4 py-2 rounded-lg font-medium transition-all ${
+        className={`h-8 rounded-full border px-3 text-xs font-medium transition-colors duration-150 ${
           selectedKartType === null
-            ? 'bg-primary text-white shadow-lg shadow-primary/25'
-            : 'bg-surface text-gray-400 hover:text-white hover:bg-surfaceHover border border-surfaceHover'
+            ? 'border-transparent bg-accent-strong text-white'
+            : 'text-zinc-400 hover:border-zinc-600 hover:text-zinc-100'
         }`}
       >
         All Karts
@@ -30,10 +30,10 @@ export default function KartTypeSelector({
         <button
           key={kartType}
           onClick={() => onKartTypeChange(kartType)}
-          className={`px-4 py-2 rounded-lg font-medium transition-all ${
+          className={`h-8 rounded-full border px-3 text-xs font-medium transition-colors duration-150 ${
             selectedKartType === kartType
-              ? 'bg-primary text-white shadow-lg shadow-primary/25'
-              : 'bg-surface text-gray-400 hover:text-white hover:bg-surfaceHover border border-surfaceHover'
+              ? 'border-transparent bg-accent-strong text-white'
+              : 'text-zinc-400 hover:border-zinc-600 hover:text-zinc-100'
           }`}
         >
           {kartType}

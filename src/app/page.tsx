@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Users, Clock, TrendingUp } from 'lucide-react';
 import MobileNav from '@/components/MobileNav';
 import { Track } from '@/types';
 import connectDB from '@/lib/mongodb';
@@ -68,49 +67,13 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="border-b border-surface">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
+      <header className="border-b">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between">
             <div>
-              <h1 className="text-3xl font-display font-bold text-white">
-                <span className="text-primary">Karting</span> Analysis
-              </h1>
-              <p className="text-sm text-gray-400 mt-1">Pakistan Track Leaderboards</p>
+              <p className="text-base font-semibold tracking-tight">Karting Analysis</p>
+              <p className="text-xs text-zinc-500">Pakistan track leaderboards</p>
             </div>
-
-            {/* Desktop navigation */}
-            <nav className="hidden lg:flex items-center gap-6">
-              <Link
-                href="/tracks/sportzilla-formula-karting"
-                className="text-gray-400 hover:text-primary transition-colors font-medium"
-              >
-                Sportzilla
-              </Link>
-              <Link
-                href="/tracks/apex-autodrome"
-                className="text-gray-400 hover:text-primary transition-colors font-medium"
-              >
-                Apex Autodrome
-              </Link>
-              <Link
-                href="/tracks/2f2f-formula-karting"
-                className="text-gray-400 hover:text-primary transition-colors font-medium"
-              >
-                2F2F Lahore
-              </Link>
-              <Link
-                href="/tracks/2f2f-formula-karting-islamabad"
-                className="text-gray-400 hover:text-primary transition-colors font-medium"
-              >
-                2F2F Islamabad
-              </Link>
-              <Link
-                href="/tracks/omni-karting-circuit"
-                className="text-gray-400 hover:text-primary transition-colors font-medium"
-              >
-                Omni Circuit
-              </Link>
-            </nav>
 
             {/* Mobile navigation */}
             <MobileNav />
@@ -118,73 +81,38 @@ export default async function HomePage() {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-        <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-white mb-4">
-            Track Your <span className="text-primary">Racing</span> Performance
-          </h2>
-          <p className="text-base sm:text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
-            Comprehensive lap time analysis with tier rankings, percentiles, and competitive insights
-            for Pakistan's premier karting tracks.
+      {/* Hero */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 md:py-20">
+        <div className="max-w-2xl">
+          <h1 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
+            Lap time analysis for Pakistan&apos;s karting tracks
+          </h1>
+          <p className="mt-4 text-base text-zinc-400">
+            Leaderboards, tier rankings, and lap time distributions for every driver,
+            sourced from official RaceFacer timing data.
           </p>
         </div>
 
-        {/* Features */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
-          <div className="bg-surface border border-surfaceHover rounded-lg p-6 text-center">
-            <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <TrendingUp className="w-6 h-6 text-primary" />
-            </div>
-            <h3 className="font-display font-semibold text-white mb-2">Tier Rankings</h3>
-            <p className="text-sm text-gray-400">S+ to D tier classification based on statistical analysis</p>
-          </div>
-
-          <div className="bg-surface border border-surfaceHover rounded-lg p-6 text-center">
-            <div className="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Users className="w-6 h-6 text-accent" />
-            </div>
-            <h3 className="font-display font-semibold text-white mb-2">Leaderboards</h3>
-            <p className="text-sm text-gray-400">Real-time rankings with search and filters</p>
-          </div>
-
-          <div className="bg-surface border border-surfaceHover rounded-lg p-6 text-center">
-            <div className="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Clock className="w-6 h-6 text-secondary" />
-            </div>
-            <h3 className="font-display font-semibold text-white mb-2">Gap Analysis</h3>
-            <p className="text-sm text-gray-400">See your gap to P1 and nearby competitors</p>
-          </div>
-
-          <div className="bg-surface border border-surfaceHover rounded-lg p-6 text-center">
-            <div className="w-12 h-12 bg-tierA/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <TrendingUp className="w-6 h-6 text-tierA" />
-            </div>
-            <h3 className="font-display font-semibold text-white mb-2">Statistics</h3>
-            <p className="text-sm text-gray-400">Percentiles, distributions, and insights</p>
-          </div>
-        </div>
-
-                {/* Track Selection */}
-        <div>
-          <h3 className="text-2xl md:text-3xl font-display font-bold text-white mb-6 md:mb-8 text-center">
-            Select a Track
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Track Selection */}
+        <div className="mt-12 md:mt-16">
+          <h2 className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+            Select a track
+          </h2>
+          <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
             {tracks.map((track) => (
               <Link
                 key={track.slug}
                 href={`/tracks/${track.slug}`}
-                className="group bg-surface border border-surfaceHover rounded-xl p-8 hover:border-primary transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                className="group rounded-xl border bg-surface p-6 transition-colors duration-150 hover:border-zinc-700"
               >
-                <div className="flex items-start justify-between mb-6">
-                  <div>
-                    <h4 className="text-2xl font-display font-bold text-white group-hover:text-primary transition-colors mb-2">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <h3 className="text-lg font-semibold tracking-tight transition-colors duration-150 group-hover:text-accent-soft">
                       {track.name}
-                    </h4>
-                    <p className="text-gray-400">{track.location}</p>
+                    </h3>
+                    <p className="mt-1 text-sm text-zinc-500">{track.location}</p>
                   </div>
-                  <div className="relative w-16 h-16 rounded-lg overflow-hidden group-hover:scale-110 transition-transform">
+                  <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg">
                     <Image
                       src={`/tracks/${track.slug}.png`}
                       alt={`${track.name} logo`}
@@ -195,53 +123,58 @@ export default async function HomePage() {
                 </div>
 
                 {track.kartRecords && track.kartRecords.length > 0 ? (
-                  <div className="space-y-4">
-                    <div className="text-sm text-gray-400 mb-2">
-                      {track.kartTypes?.some(t => t.toLowerCase().includes('track')) 
-                        ? 'Track Records by Layout:' 
-                        : 'Track Records by Kart Type:'}
-                    </div>
-                    <div className="grid grid-cols-1 gap-3">
+                  <div className="mt-6">
+                    <p className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+                      {track.kartTypes?.some(t => t.toLowerCase().includes('track'))
+                        ? 'Records by layout'
+                        : 'Records by kart type'}
+                    </p>
+                    <dl className="mt-3 space-y-2.5">
                       {track.kartRecords.map((kartRecord) => (
-                        <div key={kartRecord.kartType} className="bg-background/50 rounded-lg p-3 border border-surfaceHover">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <div className="text-xs text-gray-500 mb-1">{kartRecord.kartType}</div>
-                              <div className="text-lg font-bold text-accent">{kartRecord.worldRecord}</div>
-                              <div className="text-xs text-gray-500 mt-1">{kartRecord.recordHolder}</div>
-                            </div>
-                          </div>
+                        <div key={kartRecord.kartType} className="flex items-baseline justify-between gap-4">
+                          <dt className="truncate text-sm text-zinc-400">{kartRecord.kartType}</dt>
+                          <dd className="flex items-baseline gap-2 text-right">
+                            <span className="text-xs text-zinc-500">{kartRecord.recordHolder}</span>
+                            <span className="font-mono text-sm tabular-nums text-accent-soft">
+                              {kartRecord.worldRecord}
+                            </span>
+                          </dd>
                         </div>
                       ))}
-                    </div>
-                    <div className="flex items-center justify-between mt-4 pt-4 border-t border-surfaceHover">
-                      <div>
-                        <div className="text-sm text-gray-400 mb-1">Total Drivers</div>
-                        <div className="text-xl font-bold text-white">{(track.stats?.totalDrivers || 0).toLocaleString()}</div>
-                      </div>
-                      <div className="text-primary group-hover:translate-x-2 transition-transform">
-                        View Leaderboard →
-                      </div>
+                    </dl>
+                    <div className="mt-5 flex items-center justify-between border-t pt-4">
+                      <p className="text-sm text-zinc-500">
+                        {(track.stats?.totalDrivers || 0).toLocaleString()} drivers
+                      </p>
+                      <span className="text-sm font-medium text-accent-soft">
+                        View leaderboard →
+                      </span>
                     </div>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <div className="text-sm text-gray-400 mb-1">Track Record</div>
-                      <div className="text-xl font-bold text-accent">{track.stats?.worldRecordStr || 'N/A'}</div>
-                      <div className="text-xs text-gray-500 mt-1">{track.stats?.recordHolder || 'Unknown'}</div>
-                    </div>
-
-                    <div>
-                      <div className="text-sm text-gray-400 mb-1">Total Drivers</div>
-                      <div className="text-xl font-bold text-white">{(track.stats?.totalDrivers || 0).toLocaleString()}</div>
-                    </div>
-
-                    <div className="flex items-end justify-end">
-                      <div className="text-primary group-hover:translate-x-2 transition-transform">
-                        View Leaderboard →
+                  <div className="mt-6 border-t pt-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+                          Track record
+                        </p>
+                        <p className="mt-1.5 font-mono text-lg tabular-nums text-accent-soft">
+                          {track.stats?.worldRecordStr || 'N/A'}
+                        </p>
+                        <p className="mt-0.5 text-xs text-zinc-500">{track.stats?.recordHolder || 'Unknown'}</p>
+                      </div>
+                      <div>
+                        <p className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+                          Total drivers
+                        </p>
+                        <p className="mt-1.5 text-lg font-semibold tabular-nums text-zinc-100">
+                          {(track.stats?.totalDrivers || 0).toLocaleString()}
+                        </p>
                       </div>
                     </div>
+                    <p className="mt-4 text-sm font-medium text-accent-soft">
+                      View leaderboard →
+                    </p>
                   </div>
                 )}
               </Link>
@@ -250,14 +183,12 @@ export default async function HomePage() {
         </div>
       </section>
 
-        
-
       {/* Footer */}
-      <footer className="border-t border-surface mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center text-gray-400 text-sm">
-            <p>Data sourced from RaceFacer • Updated to 29th March 2026</p>
-          </div>
+      <footer className="mt-8 border-t">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+          <p className="text-center text-xs text-zinc-500">
+            Data sourced from RaceFacer • Updated to 29th March 2026
+          </p>
         </div>
       </footer>
     </div>

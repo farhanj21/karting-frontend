@@ -215,8 +215,8 @@ export default function AboutTrackPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-400">Loading track information...</p>
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-surfaceHover border-t-accent" />
+          <p className="text-sm text-zinc-500">Loading track information...</p>
         </div>
       </div>
     );
@@ -226,7 +226,7 @@ export default function AboutTrackPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-400">Track not found</p>
+          <p className="text-sm text-zinc-500">Track not found</p>
         </div>
       </div>
     );
@@ -235,16 +235,17 @@ export default function AboutTrackPage() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="border-b border-surface sticky top-0 bg-background/95 backdrop-blur z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center gap-4">
+      <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center gap-3 sm:gap-4">
             <Link
               href={`/tracks/${slug}`}
-              className="text-gray-400 hover:text-white transition-colors"
+              className="text-zinc-500 transition-colors duration-150 hover:text-zinc-100"
+              aria-label="Back to leaderboard"
             >
-              <ChevronLeft className="w-6 h-6" />
+              <ChevronLeft className="h-5 w-5" />
             </Link>
-            <div className="relative w-12 h-12 rounded-lg overflow-hidden">
+            <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg">
               <Image
                 src={`/tracks/${slug}.png`}
                 alt={`${track.name} logo`}
@@ -252,11 +253,11 @@ export default function AboutTrackPage() {
                 className="object-contain"
               />
             </div>
-            <div className="flex-1">
-              <h1 className="text-2xl font-display font-bold text-white">
+            <div className="min-w-0 flex-1">
+              <h1 className="truncate text-lg font-semibold tracking-tight md:text-xl">
                 About {track.name}
               </h1>
-              <p className="text-sm text-gray-400">{track.location}</p>
+              <p className="truncate text-xs text-zinc-500">{track.location}</p>
             </div>
           </div>
         </div>
@@ -265,16 +266,16 @@ export default function AboutTrackPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Track Layout Images - Multiple layouts */}
         {track.about?.layoutImages && track.about.layoutImages.length > 0 && (
-          <div className="bg-surface border border-surfaceHover rounded-xl p-6 mb-8">
+          <div className="mb-8 rounded-xl border bg-surface p-5 md:p-6">
             <div className="flex items-center gap-2 mb-4">
-              <Flag className="w-5 h-5 text-primary" />
-              <h2 className="text-xl font-display font-bold text-white">Track Layouts</h2>
+              <Flag className="h-4 w-4 text-zinc-500" />
+              <h2 className="text-lg font-semibold tracking-tight">Track Layouts</h2>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {track.about.layoutImages.map((layout: any, index: number) => (
                 <div key={index} className="space-y-2">
-                  <div className="text-sm text-gray-400 font-medium text-center">{layout.label}</div>
-                  <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-background">
+                  <div className="text-center text-xs font-medium text-zinc-500">{layout.label}</div>
+                  <div className="relative w-full aspect-video overflow-hidden rounded-lg border bg-background/40">
                     <Image
                       src={layout.url}
                       alt={`${track.name} - ${layout.label}`}
@@ -290,12 +291,12 @@ export default function AboutTrackPage() {
 
         {/* Track Layout Image - Single layout (backward compatibility) */}
         {track.about?.layoutImage && !track.about?.layoutImages && (
-          <div className="bg-surface border border-surfaceHover rounded-xl p-6 mb-8">
+          <div className="mb-8 rounded-xl border bg-surface p-5 md:p-6">
             <div className="flex items-center gap-2 mb-4">
-              <Flag className="w-5 h-5 text-primary" />
-              <h2 className="text-xl font-display font-bold text-white">Track Layout</h2>
+              <Flag className="h-4 w-4 text-zinc-500" />
+              <h2 className="text-lg font-semibold tracking-tight">Track Layout</h2>
             </div>
-            <div className="relative w-full max-w-3xl mx-auto aspect-video rounded-lg overflow-hidden">
+            <div className="relative mx-auto aspect-video w-full max-w-3xl overflow-hidden rounded-lg border bg-background/40">
               <Image
                 src={track.about.layoutImage}
                 alt={`${track.name} track layout`}
@@ -308,33 +309,33 @@ export default function AboutTrackPage() {
 
         {/* Description */}
         {track.about?.description && (
-          <div className="bg-surface border border-surfaceHover rounded-xl p-6 mb-8">
+          <div className="mb-8 rounded-xl border bg-surface p-5 md:p-6">
             <div className="flex items-center gap-2 mb-4">
-              <Info className="w-5 h-5 text-primary" />
-              <h2 className="text-xl font-display font-bold text-white">About the Track</h2>
+              <Info className="h-4 w-4 text-zinc-500" />
+              <h2 className="text-lg font-semibold tracking-tight">About the Track</h2>
             </div>
-            <p className="text-gray-300 leading-relaxed">{track.about.description}</p>
+            <p className="text-sm leading-relaxed text-zinc-300">{track.about.description}</p>
           </div>
         )}
 
         {/* Kart Records - Show for tracks with multiple kart types */}
         {kartRecords.length > 0 && (
-          <div className="bg-surface border border-surfaceHover rounded-xl p-6 mb-8">
+          <div className="mb-8 rounded-xl border bg-surface p-5 md:p-6">
             <div className="flex items-center gap-2 mb-4">
-              <Trophy className="w-5 h-5 text-primary" />
-              <h2 className="text-xl font-display font-bold text-white">Track Records by Kart Type</h2>
+              <Trophy className="h-4 w-4 text-zinc-500" />
+              <h2 className="text-lg font-semibold tracking-tight">Track Records by Kart Type</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {kartRecords.map((record) => (
                 <div
                   key={record.kartType}
-                  className="bg-background/50 rounded-lg p-4 border border-surfaceHover"
+                  className="rounded-lg border bg-background/40 p-4"
                 >
-                  <div className="text-sm text-gray-400 mb-2">{record.kartType}</div>
-                  <div className="text-2xl font-bold text-accent mb-1">
+                  <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">{record.kartType}</div>
+                  <div className="mt-1.5 font-mono text-xl tabular-nums text-accent-soft">
                     {record.worldRecord}
                   </div>
-                  <div className="text-sm text-gray-500">{record.recordHolder}</div>
+                  <div className="mt-0.5 text-xs text-zinc-500">{record.recordHolder}</div>
                 </div>
               ))}
             </div>
@@ -343,40 +344,40 @@ export default function AboutTrackPage() {
 
         {/* Track Details */}
         {track.about?.details && (
-          <div className="bg-surface border border-surfaceHover rounded-xl p-6 mb-8">
+          <div className="mb-8 rounded-xl border bg-surface p-5 md:p-6">
             <div className="flex items-center gap-2 mb-4">
-              <Ruler className="w-5 h-5 text-primary" />
-              <h2 className="text-xl font-display font-bold text-white">Track Specifications</h2>
+              <Ruler className="h-4 w-4 text-zinc-500" />
+              <h2 className="text-lg font-semibold tracking-tight">Track Specifications</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {track.about.details.length && track.about.details.length !== 'TBD' && (
                 <div>
-                  <div className="text-sm text-gray-400 mb-1">Track Length</div>
-                  <div className="text-lg font-semibold text-white">{track.about.details.length}</div>
+                  <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">Track Length</div>
+                  <div className="mt-1 text-sm font-medium text-zinc-100">{track.about.details.length}</div>
                 </div>
               )}
               {track.about.details.width && track.about.details.width !== 'TBD' && (
                 <div>
-                  <div className="text-sm text-gray-400 mb-1">Track Width</div>
-                  <div className="text-lg font-semibold text-white">{track.about.details.width}</div>
+                  <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">Track Width</div>
+                  <div className="mt-1 text-sm font-medium text-zinc-100">{track.about.details.width}</div>
                 </div>
               )}
               {track.about.details.corners && track.about.details.corners !== 0 && (
                 <div>
-                  <div className="text-sm text-gray-400 mb-1">Number of Corners</div>
-                  <div className="text-lg font-semibold text-white">{track.about.details.corners}</div>
+                  <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">Number of Corners</div>
+                  <div className="mt-1 text-sm font-medium text-zinc-100">{track.about.details.corners}</div>
                 </div>
               )}
               {track.about.details.surface && track.about.details.surface !== 'TBD' && (
                 <div>
-                  <div className="text-sm text-gray-400 mb-1">Surface Type</div>
-                  <div className="text-lg font-semibold text-white">{track.about.details.surface}</div>
+                  <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">Surface Type</div>
+                  <div className="mt-1 text-sm font-medium text-zinc-100">{track.about.details.surface}</div>
                 </div>
               )}
               {track.about.details.kartType && (
                 <div>
-                  <div className="text-sm text-gray-400 mb-1">Kart Type</div>
-                  <div className="text-lg font-semibold text-white">{track.about.details.kartType}</div>
+                  <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">Kart Type</div>
+                  <div className="mt-1 text-sm font-medium text-zinc-100">{track.about.details.kartType}</div>
                 </div>
               )}
             </div>
@@ -385,14 +386,14 @@ export default function AboutTrackPage() {
 
         {/* Videos */}
         {track.about?.videos && track.about.videos.length > 0 && (
-          <div className="bg-surface border border-surfaceHover rounded-xl p-6 mb-8">
+          <div className="mb-8 rounded-xl border bg-surface p-5 md:p-6">
             <div className="flex items-center gap-2 mb-4">
-              <Video className="w-5 h-5 text-primary" />
-              <h2 className="text-xl font-display font-bold text-white">Track Videos</h2>
+              <Video className="h-4 w-4 text-zinc-500" />
+              <h2 className="text-lg font-semibold tracking-tight">Track Videos</h2>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {track.about.videos.map((videoUrl, index) => (
-                <div key={index} className="relative w-full aspect-video bg-background rounded-lg overflow-hidden">
+                <div key={index} className="relative w-full aspect-video overflow-hidden rounded-lg border bg-background/40">
                   <iframe
                     src={videoUrl}
                     title={`${track.name} video ${index + 1}`}
@@ -408,13 +409,13 @@ export default function AboutTrackPage() {
 
         {/* Map Location */}
         {track.about?.mapLocation && (
-          <div className="bg-surface border border-surfaceHover rounded-xl p-6">
+          <div className="rounded-xl border bg-surface p-5 md:p-6">
             <div className="flex items-center gap-2 mb-4">
-              <MapPin className="w-5 h-5 text-primary" />
-              <h2 className="text-xl font-display font-bold text-white">Location</h2>
+              <MapPin className="h-4 w-4 text-zinc-500" />
+              <h2 className="text-lg font-semibold tracking-tight">Location</h2>
             </div>
             {track.about.mapLocation.embedUrl ? (
-              <div className="relative w-full h-96 bg-background rounded-lg overflow-hidden">
+              <div className="relative h-96 w-full overflow-hidden rounded-lg border bg-background/40">
                 <iframe
                   src={track.about.mapLocation.embedUrl}
                   title={`${track.name} location`}
@@ -424,7 +425,7 @@ export default function AboutTrackPage() {
                 />
               </div>
             ) : (
-              <div className="text-gray-400">
+              <div className="text-sm text-zinc-400">
                 Coordinates: {track.about.mapLocation.lat}, {track.about.mapLocation.lng}
               </div>
             )}
@@ -433,10 +434,10 @@ export default function AboutTrackPage() {
 
         {/* Empty State */}
         {!track.about && (
-          <div className="bg-surface border border-surfaceHover rounded-xl p-12 text-center">
-            <Info className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-display font-bold text-white mb-2">No additional information available</h3>
-            <p className="text-gray-400">
+          <div className="rounded-xl border bg-surface p-12 text-center">
+            <Info className="mx-auto mb-4 h-10 w-10 text-zinc-700" />
+            <h3 className="text-lg font-semibold tracking-tight">No additional information available</h3>
+            <p className="mt-2 text-sm text-zinc-500">
               Track details, layout images, and videos will be added soon.
             </p>
           </div>

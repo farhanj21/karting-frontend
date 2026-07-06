@@ -13,25 +13,31 @@ interface LeaderboardTableProps {
   kartTypeLabel?: string;
 }
 
-export default function LeaderboardTable({ 
-  records, 
-  loading, 
+const positionDotClass: Record<number, string> = {
+  1: 'bg-accent',
+  2: 'bg-zinc-400',
+  3: 'bg-zinc-600',
+};
+
+export default function LeaderboardTable({
+  records,
+  loading,
   showKartType = false,
-  kartTypeLabel = 'Kart Type' 
+  kartTypeLabel = 'Kart Type'
 }: LeaderboardTableProps) {
   if (loading) {
     return (
       <>
         {/* Desktop loading skeleton */}
-        <div className="hidden md:block space-y-2">
+        <div className="hidden space-y-2 p-4 md:block">
           {[...Array(10)].map((_, i) => (
-            <div key={i} className="h-16 bg-surface rounded skeleton" />
+            <div key={i} className="skeleton h-12 rounded-lg" />
           ))}
         </div>
         {/* Mobile loading skeleton */}
-        <div className="block md:hidden space-y-3">
+        <div className="block space-y-2 p-4 md:hidden">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-48 bg-surface rounded skeleton" />
+            <div key={i} className="skeleton h-40 rounded-lg" />
           ))}
         </div>
       </>
@@ -40,8 +46,8 @@ export default function LeaderboardTable({
 
   if (records.length === 0) {
     return (
-      <div className="text-center py-12 bg-surface rounded-lg border border-surfaceHover">
-        <p className="text-gray-400">No records found</p>
+      <div className="py-16 text-center">
+        <p className="text-sm text-zinc-500">No records found</p>
       </div>
     );
   }
@@ -49,115 +55,102 @@ export default function LeaderboardTable({
   return (
     <>
       {/* Desktop table view */}
-      <div className="hidden md:block overflow-x-auto">
-        <table className="w-full">
+      <div className="hidden max-h-[75vh] overflow-auto md:block">
+        <table className="w-full border-separate border-spacing-0 text-sm">
           <thead>
-            <tr className="border-b border-surfaceHover">
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+            <tr>
+              <th className="sticky top-0 z-[1] whitespace-nowrap border-b bg-surface px-4 py-3 text-left text-[11px] font-medium uppercase tracking-wider text-zinc-500">
                 Pos
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <th className="sticky top-0 z-[1] whitespace-nowrap border-b bg-surface px-4 py-3 text-left text-[11px] font-medium uppercase tracking-wider text-zinc-500">
                 Driver
               </th>
               {showKartType && (
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                <th className="sticky top-0 z-[1] whitespace-nowrap border-b bg-surface px-4 py-3 text-left text-[11px] font-medium uppercase tracking-wider text-zinc-500">
                   {kartTypeLabel}
                 </th>
               )}
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <th className="sticky top-0 z-[1] whitespace-nowrap border-b bg-surface px-4 py-3 text-left text-[11px] font-medium uppercase tracking-wider text-zinc-500">
                 Tier
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <th className="sticky top-0 z-[1] whitespace-nowrap border-b bg-surface px-4 py-3 text-left text-[11px] font-medium uppercase tracking-wider text-zinc-500">
                 Best Time
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <th className="sticky top-0 z-[1] whitespace-nowrap border-b bg-surface px-4 py-3 text-left text-[11px] font-medium uppercase tracking-wider text-zinc-500">
                 Gap to P1
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <th className="sticky top-0 z-[1] whitespace-nowrap border-b bg-surface px-4 py-3 text-left text-[11px] font-medium uppercase tracking-wider text-zinc-500">
                 Interval
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <th className="sticky top-0 z-[1] whitespace-nowrap border-b bg-surface px-4 py-3 text-left text-[11px] font-medium uppercase tracking-wider text-zinc-500">
                 Percentile
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <th className="sticky top-0 z-[1] whitespace-nowrap border-b bg-surface px-4 py-3 text-left text-[11px] font-medium uppercase tracking-wider text-zinc-500">
                 Date
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-surfaceHover">
+          <tbody className="[&>tr:last-child>td]:border-b-0">
             {records.map((record) => (
               <tr
                 key={record._id}
-                className="hover:bg-surfaceHover transition-colors"
+                className="transition-colors duration-150 hover:bg-surfaceHover/40"
               >
-                <td className="px-4 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    {record.position === 1 && (
-                      <span className="text-2xl mr-2">🏆</span>
+                <td className="whitespace-nowrap border-b border-surfaceHover/60 px-4 py-3.5">
+                  <div className="flex items-center gap-2">
+                    {record.position <= 3 && (
+                      <span
+                        className={`h-1.5 w-1.5 rounded-full ${positionDotClass[record.position]}`}
+                        aria-hidden
+                      />
                     )}
-                    {record.position === 2 && (
-                      <span className="text-2xl mr-2">🥈</span>
-                    )}
-                    {record.position === 3 && (
-                      <span className="text-2xl mr-2">🥉</span>
-                    )}
-                    <span className="text-sm font-semibold text-white">
+                    <span className="text-xs tabular-nums text-zinc-500">
                       {record.position}
                     </span>
                   </div>
                 </td>
-                <td className="px-4 py-4">
-                  <div className="flex items-center">
-                    <div>
-                      <div className="text-sm font-medium text-white">
-                        {record.driverName}
-                      </div>
-                      <a
-                        href={record.profileUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs text-gray-400 hover:text-primary flex items-center gap-1 mt-1"
-                      >
-                        RaceFacer Profile
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
-                    </div>
+                <td className="border-b border-surfaceHover/60 px-4 py-3.5">
+                  <div className="text-sm font-medium text-zinc-100">
+                    {record.driverName}
                   </div>
+                  <a
+                    href={record.profileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-0.5 inline-flex items-center gap-1 text-xs text-zinc-500 transition-colors duration-150 hover:text-accent-soft"
+                  >
+                    RaceFacer Profile
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
                 </td>
                 {showKartType && (
-                  <td className="px-4 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-300">
-                      {record.kartType || 'N/A'}
-                    </div>
+                  <td className="whitespace-nowrap border-b border-surfaceHover/60 px-4 py-3.5 text-sm text-zinc-400">
+                    {record.kartType || 'N/A'}
                   </td>
                 )}
-                <td className="px-4 py-4 whitespace-nowrap">
+                <td className="whitespace-nowrap border-b border-surfaceHover/60 px-4 py-3.5">
                   <TierBadge tier={record.tier} />
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap">
-                  <div className="text-sm font-mono font-bold text-accent">
+                <td className="whitespace-nowrap border-b border-surfaceHover/60 px-4 py-3.5">
+                  <span
+                    className={`font-mono text-sm font-medium tabular-nums ${
+                      record.position === 1 ? 'text-accent-soft' : 'text-zinc-100'
+                    }`}
+                  >
                     {record.bestTimeStr}
-                  </div>
+                  </span>
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-300">
-                    {formatGap(record.gapToP1)}
-                  </div>
+                <td className="whitespace-nowrap border-b border-surfaceHover/60 px-4 py-3.5 text-sm tabular-nums text-zinc-400">
+                  {formatGap(record.gapToP1)}
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-300">
-                    {formatGap(record.interval)}
-                  </div>
+                <td className="whitespace-nowrap border-b border-surfaceHover/60 px-4 py-3.5 text-sm tabular-nums text-zinc-400">
+                  {formatGap(record.interval)}
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-300">
-                    {formatPercentile(record.percentile)}
-                  </div>
+                <td className="whitespace-nowrap border-b border-surfaceHover/60 px-4 py-3.5 text-sm tabular-nums text-zinc-400">
+                  {formatPercentile(record.percentile)}
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-400">
-                    {new Date(record.date).toLocaleDateString()}
-                  </div>
+                <td className="whitespace-nowrap border-b border-surfaceHover/60 px-4 py-3.5 text-sm text-zinc-500">
+                  {new Date(record.date).toLocaleDateString()}
                 </td>
               </tr>
             ))}
@@ -166,7 +159,7 @@ export default function LeaderboardTable({
       </div>
 
       {/* Mobile card view */}
-      <div className="block md:hidden space-y-3">
+      <div className="block divide-y divide-surfaceHover/60 md:hidden">
         {records.map((record) => (
           <LeaderboardCard
             key={record._id}

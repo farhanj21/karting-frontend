@@ -2,32 +2,76 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Chart tokens — referenced by Recharts components via var(...) so hex codes
+   stay centralized here and in tailwind.config.ts */
 :root {
-  --font-inter: 'Inter', system-ui, sans-serif;
-  --font-rajdhani: 'Rajdhani', system-ui, sans-serif;
+  --chart-grid: #27272a;
+  --chart-axis: #71717a;
+  --chart-cursor: rgba(250, 250, 250, 0.04);
+  --chart-tooltip-bg: #18181b;
+  --chart-tooltip-border: #27272a;
+  --chart-bar: #8b5cf6;
+  --chart-warzone: #d97706;
+  /* Tier chart fills — CVD/contrast validated against the dark surface */
+  --tier-s-plus: #8b5cf6;
+  --tier-s: #d97706;
+  --tier-a: #059669;
+  --tier-b: #3b82f6;
+  --tier-c: #71717a;
+  --tier-d: #ef4444;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+@layer base {
+  html,
+  body {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid theme('colors.accent.DEFAULT');
+    outline-offset: 2px;
+  }
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-  background-color: #0a0a0a;
-  color: #ffffff;
-}
+@layer components {
+  /* Tier badges — muted tint + matching text */
+  .tier-badge {
+    @apply inline-flex items-center justify-center rounded font-medium;
+  }
 
-body {
-  font-family: var(--font-inter);
-}
+  .tier-s-plus {
+    @apply bg-tierSPlus/10 text-tierSPlus-text;
+  }
 
-a {
-  color: inherit;
-  text-decoration: none;
+  .tier-s {
+    @apply bg-tierS/10 text-tierS-text;
+  }
+
+  .tier-a {
+    @apply bg-tierA/10 text-tierA-text;
+  }
+
+  .tier-b {
+    @apply bg-tierB/10 text-tierB-text;
+  }
+
+  .tier-c {
+    @apply bg-tierC/10 text-tierC-text;
+  }
+
+  .tier-d {
+    @apply bg-tierD/10 text-tierD-text;
+  }
 }
 
 @layer utilities {
@@ -38,69 +82,21 @@ a {
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #252525;
-  border-radius: 5px;
+  background: #27272a;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #333333;
-}
-
-/* Racing gradient background */
-.racing-gradient {
-  background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 50%, #0a0a0a 100%);
-}
-
-/* Tier badge styles */
-.tier-badge {
-  @apply px-2 py-1 rounded text-xs font-bold uppercase;
-}
-
-.tier-s-plus {
-  @apply bg-tierSPlus/20 text-tierSPlus border border-tierSPlus/30;
-}
-
-.tier-s {
-  @apply bg-tierS/20 text-tierS border border-tierS/30;
-}
-
-.tier-a {
-  @apply bg-tierA/20 text-tierA border border-tierA/30;
-}
-
-.tier-b {
-  @apply bg-tierB/20 text-tierB border border-tierB/30;
-}
-
-.tier-c {
-  @apply bg-tierC/20 text-tierC border border-tierC/30;
-}
-
-.tier-d {
-  @apply bg-tierD/20 text-tierD border border-tierD/30;
-}
-
-/* Glow effects */
-.glow-primary {
-  box-shadow: 0 0 20px rgba(255, 51, 51, 0.3);
-}
-
-.glow-accent {
-  box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
-}
-
-/* Card hover effect */
-.card-hover {
-  @apply transition-all duration-300 hover:scale-105 hover:shadow-lg;
+  background: #3f3f46;
 }
 
 /* Loading skeleton */
@@ -117,9 +113,9 @@ a {
   animation: shimmer 2s infinite linear;
   background: linear-gradient(
     to right,
-    #1a1a1a 4%,
-    #252525 25%,
-    #1a1a1a 36%
+    #18181b 4%,
+    #1f1f23 25%,
+    #18181b 36%
   );
   background-size: 1000px 100%;
 }

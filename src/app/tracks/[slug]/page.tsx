@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Trophy, Users, Clock, TrendingUp, ChevronLeft, Filter, Flame, BarChart3, Award, ExternalLink } from 'lucide-react';
+import { Users, Clock, TrendingUp, ChevronLeft, Filter, BarChart3, Award, ExternalLink, AlertTriangle, X } from 'lucide-react';
 import StatCard from '@/components/StatCard';
 import SearchBar from '@/components/SearchBar';
 import LeaderboardTable from '@/components/LeaderboardTable';
@@ -366,8 +366,8 @@ export default function TrackLeaderboardPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-400">Loading track data...</p>
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-surfaceHover border-t-accent" />
+          <p className="text-sm text-zinc-500">Loading track data...</p>
         </div>
       </div>
     );
@@ -381,16 +381,17 @@ export default function TrackLeaderboardPage() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="border-b border-surface sticky top-0 bg-background/95 backdrop-blur z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center gap-4">
+      <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center gap-3 sm:gap-4">
             <Link
               href="/"
-              className="text-gray-400 hover:text-white transition-colors"
+              className="text-zinc-500 transition-colors duration-150 hover:text-zinc-100"
+              aria-label="Back to tracks"
             >
-              <ChevronLeft className="w-6 h-6" />
+              <ChevronLeft className="h-5 w-5" />
             </Link>
-            <div className="relative w-12 h-12 rounded-lg overflow-hidden">
+            <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg">
               <Image
                 src={`/tracks/${slug}.png`}
                 alt={`${track.name} logo`}
@@ -398,15 +399,15 @@ export default function TrackLeaderboardPage() {
                 className="object-contain"
               />
             </div>
-            <div className="flex-1">
-              <h1 className="text-xl md:text-2xl font-display font-bold text-white">
+            <div className="min-w-0 flex-1">
+              <h1 className="truncate text-lg font-semibold tracking-tight md:text-xl">
                 {track.name}
               </h1>
-              <p className="text-xs md:text-sm text-gray-400">{track.location}</p>
+              <p className="truncate text-xs text-zinc-500">{track.location}</p>
             </div>
             <Link
               href={`/tracks/${slug}/about`}
-              className="px-4 py-2 bg-surfaceHover text-white rounded hover:bg-surface transition-colors text-sm font-medium"
+              className="shrink-0 rounded-lg border px-3 py-1.5 text-sm font-medium text-zinc-300 transition-colors duration-150 hover:bg-surfaceHover/60 hover:text-zinc-100"
             >
               About Track
             </Link>
@@ -417,12 +418,12 @@ export default function TrackLeaderboardPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* 2F2F Layout Disclaimer */}
         {(slug === '2f2f-formula-karting' || slug === '2f2f-formula-karting-islamabad') && (
-          <div className="bg-amber-900/20 border border-amber-700/50 rounded-lg p-4 mb-8">
+          <div className="mb-8 rounded-xl border border-amber-500/20 bg-amber-500/5 p-4">
             <div className="flex items-start gap-3">
-              <div className="text-amber-500 mt-0.5">⚠️</div>
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
               <div>
-                <h3 className="text-amber-400 font-semibold text-sm mb-1">Track Layout Notice</h3>
-                <p className="text-amber-200/80 text-sm">
+                <h3 className="text-sm font-medium text-amber-300">Track Layout Notice</h3>
+                <p className="mt-1 text-sm text-zinc-400">
                   2F2F sometimes varies their track layouts. Some lap times around 50 seconds may reflect a different track configuration.
                 </p>
               </div>
@@ -431,35 +432,31 @@ export default function TrackLeaderboardPage() {
         )}
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <StatCard
             title="Total Drivers"
             value={displayStats.totalDrivers.toLocaleString()}
             icon={Users}
-            iconColor="text-primary"
           />
           <StatCard
             title="Top 1% Time"
             value={formatTime(displayStats.top1Percent)}
             icon={TrendingUp}
-            iconColor="text-secondary"
           />
           <StatCard
             title="Median Time"
             value={formatTime(displayStats.median)}
             icon={Clock}
-            iconColor="text-tierC"
           />
           <StatCard
             title="Mean Time"
             value={displayStats.mean ? formatTime(displayStats.mean) : 'N/A'}
             icon={Clock}
-            iconColor="text-tierB"
           />
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-surface border border-surfaceHover rounded-lg p-4 md:p-6 mb-8">
+        <div className="mb-8 rounded-xl border bg-surface p-4 md:p-5">
           <div className="flex flex-col gap-4">
             <div className="w-full">
               <SearchBar onSearch={handleSearch} placeholder="Search drivers..." />
@@ -478,19 +475,19 @@ export default function TrackLeaderboardPage() {
 
               {/* Tier Filter */}
               <div className="flex gap-2 flex-wrap items-center">
-                <div className="text-xs md:text-sm text-gray-400 flex items-center gap-2">
-                  <Filter className="w-4 h-4" />
-                  <span>Filter by tier:</span>
+                <div className="flex items-center gap-1.5 text-xs text-zinc-500">
+                  <Filter className="h-3.5 w-3.5" />
+                  <span>Filter by tier</span>
                 </div>
                 {['S+', 'S', 'A', 'B', 'C', 'D'].map((tier) => (
                   <button
                     type="button"
                     key={tier}
                     onClick={() => handleTierFilter(tier)}
-                    className={`px-2 py-1 md:px-3 md:py-1.5 rounded text-xs md:text-sm font-semibold transition-all ${
+                    className={`h-8 rounded-full border px-3 text-xs font-medium transition-colors duration-150 ${
                       selectedTier === tier
-                        ? 'bg-primary text-white'
-                        : 'bg-surfaceHover text-gray-400 hover:bg-surface'
+                        ? 'border-transparent bg-accent-strong text-white'
+                        : 'text-zinc-400 hover:border-zinc-600 hover:text-zinc-100'
                     }`}
                   >
                     {tier}
@@ -500,7 +497,7 @@ export default function TrackLeaderboardPage() {
                   <button
                     type="button"
                     onClick={() => setSelectedTier('')}
-                    className="px-2 py-1 md:px-3 md:py-1.5 rounded text-xs md:text-sm text-gray-400 hover:text-white"
+                    className="px-2 text-xs text-zinc-500 transition-colors duration-150 hover:text-zinc-100"
                   >
                     Clear
                   </button>
@@ -512,20 +509,20 @@ export default function TrackLeaderboardPage() {
 
         {/* Leaderboard */}
         <div ref={leaderboardRef} className="mb-8">
-          <h2 className="text-xl md:text-2xl lg:text-3xl font-display font-bold text-white mb-6">
+          <h2 className="mb-4 text-xl font-semibold tracking-tight md:text-2xl">
             Leaderboard
             {searchQuery && (
-              <span className="text-sm text-gray-400 font-normal ml-2">
+              <span className="ml-2 text-sm font-normal text-zinc-500">
                 (searching for "{searchQuery}")
               </span>
             )}
             {selectedTier && (
-              <span className="text-sm text-gray-400 font-normal ml-2">
+              <span className="ml-2 text-sm font-normal text-zinc-500">
                 (Tier {selectedTier})
               </span>
             )}
             {selectedKartType && (
-              <span className="text-sm text-gray-400 font-normal ml-2">
+              <span className="ml-2 text-sm font-normal text-zinc-500">
                 ({selectedKartType})
               </span>
             )}
@@ -533,100 +530,46 @@ export default function TrackLeaderboardPage() {
 
           {/* Podium - Only show on first page without filters */}
           {!loading && records.length >= 3 && page === 1 && !searchQuery && !selectedTier && (
-            <div className="bg-gradient-to-b from-surface to-background border border-surfaceHover rounded-xl p-4 md:p-8 mb-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-4xl mx-auto">
-                {/* 1st Place - First on mobile */}
-                <div className="flex flex-col items-center md:order-2">
-                  <div className="w-full bg-gradient-to-br from-yellow-500 to-yellow-700 rounded-lg p-4 md:p-6 text-center border-2 border-yellow-400 shadow-lg shadow-yellow-500/50">
-                    <div className="text-4xl md:text-5xl mb-2">🏆</div>
-                    <div className="text-xs md:text-sm text-yellow-200 mb-2 font-semibold">Champion</div>
-                    <div className="text-lg md:text-xl font-display font-bold text-white mb-1">
-                      {records[0].driverName}
-                    </div>
-                    <div className="flex justify-center mb-2">
-                      <TierBadge tier={records[0].tier} />
-                    </div>
-                    <div className="text-2xl md:text-3xl font-mono font-bold text-white">
-                      {records[0].bestTimeStr}
-                    </div>
-                    <div className="text-xs text-yellow-200 mt-2 font-semibold">
-                      Track Record
-                    </div>
-                    <a
-                      href={records[0].profileUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-xs text-yellow-200 hover:text-white mt-3 transition-colors"
-                    >
-                      View Profile
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
+            <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+              {records.slice(0, 3).map((record, i) => (
+                <div
+                  key={record._id}
+                  className={`rounded-xl border bg-surface p-5 ${i === 0 ? 'border-accent/40' : ''}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center gap-2">
+                      {i === 0 && <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />}
+                      <span className={`font-mono text-xs tabular-nums ${i === 0 ? 'text-accent-soft' : 'text-zinc-500'}`}>
+                        P{i + 1}
+                      </span>
+                    </span>
+                    <TierBadge tier={record.tier} size="sm" />
                   </div>
+                  <p className="mt-3 truncate text-base font-semibold text-zinc-100">
+                    {record.driverName}
+                  </p>
+                  <p className={`mt-1 font-mono text-2xl tabular-nums ${i === 0 ? 'text-accent-soft' : 'text-zinc-100'}`}>
+                    {record.bestTimeStr}
+                  </p>
+                  <p className="mt-1 text-xs text-zinc-500">
+                    {i === 0 ? 'Track record' : formatGap(record.gapToP1)}
+                  </p>
+                  <a
+                    href={record.profileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 inline-flex items-center gap-1 text-xs text-zinc-500 transition-colors duration-150 hover:text-accent-soft"
+                  >
+                    View Profile
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
                 </div>
-
-                {/* 2nd Place */}
-                <div className="flex flex-col items-center md:order-1">
-                  <div className="w-full bg-gradient-to-br from-gray-600 to-gray-800 rounded-lg p-4 md:p-6 text-center border-2 border-gray-500">
-                    <div className="text-3xl md:text-4xl mb-2">🥈</div>
-                    <div className="text-xs md:text-sm text-gray-400 mb-2">2nd Place</div>
-                    <div className="text-base md:text-lg font-display font-bold text-white mb-1">
-                      {records[1].driverName}
-                    </div>
-                    <div className="flex justify-center mb-2">
-                      <TierBadge tier={records[1].tier} />
-                    </div>
-                    <div className="text-xl md:text-2xl font-mono font-bold text-accent">
-                      {records[1].bestTimeStr}
-                    </div>
-                    <div className="text-xs text-gray-400 mt-2">
-                      {formatGap(records[1].gapToP1)}
-                    </div>
-                    <a
-                      href={records[1].profileUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-xs text-gray-300 hover:text-white mt-3 transition-colors"
-                    >
-                      View Profile
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
-                  </div>
-                </div>
-
-                {/* 3rd Place */}
-                <div className="flex flex-col items-center md:order-3">
-                  <div className="w-full bg-gradient-to-br from-orange-700 to-orange-900 rounded-lg p-4 md:p-6 text-center border-2 border-orange-600">
-                    <div className="text-3xl md:text-4xl mb-2">🥉</div>
-                    <div className="text-xs md:text-sm text-gray-400 mb-2">3rd Place</div>
-                    <div className="text-base md:text-lg font-display font-bold text-white mb-1">
-                      {records[2].driverName}
-                    </div>
-                    <div className="flex justify-center mb-2">
-                      <TierBadge tier={records[2].tier} />
-                    </div>
-                    <div className="text-xl md:text-2xl font-mono font-bold text-accent">
-                      {records[2].bestTimeStr}
-                    </div>
-                    <div className="text-xs text-gray-400 mt-2">
-                      {formatGap(records[2].gapToP1)}
-                    </div>
-                    <a
-                      href={records[2].profileUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-xs text-gray-300 hover:text-white mt-3 transition-colors"
-                    >
-                      View Profile
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           )}
 
           {/* Rest of Leaderboard Table */}
-          <div className="bg-surface border border-surfaceHover rounded-lg p-6">
+          <div className="overflow-hidden rounded-xl border bg-surface">
             <LeaderboardTable
               records={page === 1 && !searchQuery && !selectedTier ? records.slice(3) : records}
               loading={loading}
@@ -635,14 +578,14 @@ export default function TrackLeaderboardPage() {
             />
 
             {/* Pagination */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mt-6">
+            <div className="flex flex-col gap-4 border-t px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
               {/* Rows per page selector */}
               <div className="flex items-center justify-center sm:justify-start gap-2">
-                <span className="text-xs sm:text-sm text-gray-400">Rows per page:</span>
+                <span className="text-xs text-zinc-500">Rows per page</span>
                 <select
                   value={rowsPerPage}
                   onChange={(e) => handleRowsPerPageChange(Number(e.target.value))}
-                  className="px-2 sm:px-3 py-2 bg-surfaceHover text-white text-sm rounded border border-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="h-8 rounded-lg border bg-surface px-2 text-sm text-zinc-300 focus:border-accent/60 focus:outline-none"
                 >
                   <option value={10}>10</option>
                   <option value={20}>20</option>
@@ -652,12 +595,12 @@ export default function TrackLeaderboardPage() {
               </div>
 
               {/* Page navigation */}
-              <div className="flex items-center justify-center gap-1 sm:gap-2">
+              <div className="flex items-center justify-center gap-1.5">
                 <button
                   type="button"
                   onClick={() => setPage(1)}
                   disabled={page === 1}
-                  className="hidden sm:inline-block px-2 sm:px-3 py-2 bg-surfaceHover text-white text-sm rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface transition-colors"
+                  className="hidden h-8 items-center rounded-lg border px-3 text-sm text-zinc-300 transition-colors duration-150 hover:bg-surfaceHover/60 hover:text-zinc-100 disabled:cursor-not-allowed disabled:opacity-40 sm:inline-flex"
                 >
                   First
                 </button>
@@ -665,20 +608,18 @@ export default function TrackLeaderboardPage() {
                   type="button"
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="px-3 sm:px-4 py-2 bg-surfaceHover text-white text-sm rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface transition-colors"
+                  className="inline-flex h-8 items-center rounded-lg border px-3 text-sm text-zinc-300 transition-colors duration-150 hover:bg-surfaceHover/60 hover:text-zinc-100 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Prev
                 </button>
-                <div className="flex items-center gap-2 px-2 sm:px-4">
-                  <span className="text-xs sm:text-sm text-gray-400 whitespace-nowrap">
-                    Page {page} of {totalPages}
-                  </span>
-                </div>
+                <span className="whitespace-nowrap px-2 text-xs tabular-nums text-zinc-500">
+                  Page {page} of {totalPages}
+                </span>
                 <button
                   type="button"
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
-                  className="px-3 sm:px-4 py-2 bg-surfaceHover text-white text-sm rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface transition-colors"
+                  className="inline-flex h-8 items-center rounded-lg border px-3 text-sm text-zinc-300 transition-colors duration-150 hover:bg-surfaceHover/60 hover:text-zinc-100 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Next
                 </button>
@@ -686,7 +627,7 @@ export default function TrackLeaderboardPage() {
                   type="button"
                   onClick={() => setPage(totalPages)}
                   disabled={page === totalPages}
-                  className="hidden sm:inline-block px-2 sm:px-3 py-2 bg-surfaceHover text-white text-sm rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface transition-colors"
+                  className="hidden h-8 items-center rounded-lg border px-3 text-sm text-zinc-300 transition-colors duration-150 hover:bg-surfaceHover/60 hover:text-zinc-100 disabled:cursor-not-allowed disabled:opacity-40 sm:inline-flex"
                 >
                   Last
                 </button>
@@ -701,12 +642,12 @@ export default function TrackLeaderboardPage() {
             {/* Hall of Fame */}
             {hallOfFameData.length > 0 && !advancedStatsLoading && 
              !['2f2f-formula-karting', '2f2f-formula-karting-islamabad', 'omni-karting-circuit'].includes(slug) && (
-              <div className="bg-surface border border-surfaceHover rounded-xl p-6 mb-8">
-                <div className="flex items-center gap-2 mb-4">
-                  <Award className="w-5 h-5 text-primary" />
-                  <h2 className="text-xl font-display font-bold text-white">Hall of Fame</h2>
+              <div className="mb-8 rounded-xl border bg-surface p-5 md:p-6">
+                <div className="flex items-center gap-2">
+                  <Award className="h-4 w-4 text-zinc-500" />
+                  <h2 className="text-lg font-semibold tracking-tight">Hall of Fame</h2>
                 </div>
-                <p className="text-sm text-gray-400 mb-6">
+                <p className="mb-5 mt-1 text-sm text-zinc-500">
                   {selectedKartType ? `Track record history for ${selectedKartType}` : 'Track record history'}
                 </p>
                 <HallOfFameTimeline records={hallOfFameData} />
@@ -726,12 +667,12 @@ export default function TrackLeaderboardPage() {
 
             {/* Difficulty Wall Chart */}
             {difficultyWallData.length > 0 && !advancedStatsLoading && (
-              <div className="bg-surface border border-surfaceHover rounded-xl p-6 mb-8">
-                <div className="flex items-center gap-2 mb-4">
-                  <BarChart3 className="w-5 h-5 text-primary" />
-                  <h2 className="text-xl font-display font-bold text-white">The Difficulty Wall</h2>
+              <div className="mb-8 rounded-xl border bg-surface p-5 md:p-6">
+                <div className="flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4 text-zinc-500" />
+                  <h2 className="text-lg font-semibold tracking-tight">The Difficulty Wall</h2>
                 </div>
-                <p className="text-sm text-gray-400 mb-6">
+                <p className="mb-5 mt-1 text-sm text-zinc-500">
                   Distribution of lap times for {selectedKartType}
                 </p>
                 <DifficultyWallChart
@@ -745,16 +686,16 @@ export default function TrackLeaderboardPage() {
 
             {/* Loading State for Advanced Stats */}
             {advancedStatsLoading && (
-              <div className="bg-surface border border-surfaceHover rounded-xl p-12 mb-8 text-center">
-                <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                <p className="text-gray-400">Loading track statistics...</p>
+              <div className="mb-8 rounded-xl border bg-surface p-10 text-center">
+                <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-surfaceHover border-t-accent" />
+                <p className="text-sm text-zinc-500">Loading track statistics...</p>
               </div>
             )}
           </>
         )}
 
         {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
           <TimeDistributionChart
             data={timeDistribution}
             onTimeRangeClick={handleTimeRangeClick}
@@ -769,90 +710,81 @@ export default function TrackLeaderboardPage() {
         {/* Time Range Modal */}
         {timeRangeModalOpen && (
           <div
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
             onClick={() => setTimeRangeModalOpen(false)}
           >
             <div
-              className="bg-surface border border-surfaceHover rounded-xl max-w-4xl w-full max-h-[80vh] overflow-hidden flex flex-col"
+              className="flex max-h-[80vh] w-full max-w-3xl flex-col overflow-hidden rounded-xl border bg-surface"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Modal Header */}
-              <div className="p-6 border-b border-surfaceHover">
-                <div className="flex items-center justify-between">
+              <div className="border-b p-5">
+                <div className="flex items-center justify-between gap-4">
                   <div>
-                    <h2 className="text-2xl font-display font-bold text-white">
+                    <h2 className="text-lg font-semibold tracking-tight">
                       Drivers in Time Range
                       {!timeRangeLoading && timeRangeTotalCount > 0 && (
-                        <span className="ml-3 text-lg text-gray-400 font-normal">
+                        <span className="ml-2 text-sm font-normal text-zinc-500">
                           ({timeRangeDrivers.length} of {timeRangeTotalCount})
                         </span>
                       )}
                     </h2>
-                    <p className="text-sm text-gray-400 mt-1">
+                    <p className="mt-1 font-mono text-sm tabular-nums text-zinc-400">
                       {timeRangeInfo.bin}
                     </p>
                   </div>
                   <button
                     onClick={() => setTimeRangeModalOpen(false)}
-                    className="text-gray-400 hover:text-white transition-colors"
+                    className="rounded-lg p-1.5 text-zinc-500 transition-colors duration-150 hover:bg-surfaceHover/60 hover:text-zinc-100"
+                    aria-label="Close"
                   >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                    <X className="h-5 w-5" />
                   </button>
                 </div>
               </div>
 
               {/* Modal Content */}
-              <div className="flex-1 overflow-y-auto p-6">
+              <div className="flex-1 overflow-y-auto p-5">
                 {timeRangeLoading ? (
                   <div className="flex items-center justify-center py-12">
-                    <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-surfaceHover border-t-accent" />
                   </div>
                 ) : timeRangeDrivers.length > 0 ? (
                   <>
-                    <div className="space-y-2">
+                    <div className="divide-y divide-surfaceHover/60">
                       {timeRangeDrivers.map((record) => (
                         <div
                           key={`${record.driverSlug}-${record.date}`}
-                          className="flex items-center justify-between p-4 bg-background rounded-lg hover:bg-surfaceHover transition-colors"
+                          className="flex items-center gap-4 py-3"
                         >
-                          <div className="flex items-center gap-4 flex-1">
-                            <div className="text-sm font-semibold text-gray-500 w-12">
-                              #{record.position}
-                            </div>
-                            <div className="flex-1">
-                              <a
-                                href={record.profileUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-white font-semibold hover:text-primary transition-colors"
-                              >
-                                {record.driverName}
-                              </a>
-                            </div>
-                            <div className="text-right">
-                              <div className="text-xl font-mono font-bold text-accent">
-                                {record.bestTimeStr}
-                              </div>
-                            </div>
-                            <div>
-                              <TierBadge tier={record.tier} size="sm" />
-                            </div>
-                          </div>
+                          <span className="w-10 shrink-0 text-xs tabular-nums text-zinc-500">
+                            {record.position}
+                          </span>
+                          <a
+                            href={record.profileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="min-w-0 flex-1 truncate text-sm font-medium text-zinc-100 transition-colors duration-150 hover:text-accent-soft"
+                          >
+                            {record.driverName}
+                          </a>
+                          <span className="font-mono text-sm tabular-nums text-zinc-100">
+                            {record.bestTimeStr}
+                          </span>
+                          <TierBadge tier={record.tier} size="sm" />
                         </div>
                       ))}
                     </div>
                     {timeRangeHasMore && (
-                      <div className="mt-4 text-center">
+                      <div className="mt-5 text-center">
                         <button
                           onClick={handleLoadMoreTimeRange}
                           disabled={timeRangeLoadingMore}
-                          className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+                          className="rounded-lg bg-accent-strong px-4 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-accent disabled:cursor-not-allowed disabled:opacity-50"
                         >
                           {timeRangeLoadingMore ? (
                             <span className="flex items-center gap-2">
-                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
                               Loading...
                             </span>
                           ) : (
@@ -863,7 +795,7 @@ export default function TrackLeaderboardPage() {
                     )}
                   </>
                 ) : (
-                  <div className="text-center py-12 text-gray-400">
+                  <div className="py-12 text-center text-sm text-zinc-500">
                     No drivers found in this time range
                   </div>
                 )}

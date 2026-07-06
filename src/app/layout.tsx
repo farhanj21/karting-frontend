@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
-import { Inter, Rajdhani } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
-  variable: '--font-inter',
+  variable: "--font-sans",
+  display: "swap",
 });
 
-const rajdhani = Rajdhani({
-  weight: ['400', '500', '600', '700'],
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  variable: '--font-rajdhani',
+  variable: "--font-mono",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -32,10 +33,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.variable} ${rajdhani.variable} antialiased min-h-screen racing-gradient`}>
-        <div className="relative z-10">
-          {children}
-        </div>
+      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased min-h-screen bg-background text-foreground`}>
+        {children}
       </body>
     </html>
   );

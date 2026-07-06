@@ -17,41 +17,45 @@ export default function TimeDistributionChart({ data, onTimeRangeClick }: TimeDi
     }
   };
   return (
-    <div className="bg-surface border border-surfaceHover rounded-lg p-6">
-      <div className="mb-6">
-        <h3 className="text-xl font-display font-bold text-white">
+    <div className="rounded-xl border bg-surface p-5 md:p-6">
+      <div className="mb-5">
+        <h3 className="text-lg font-semibold tracking-tight">
           Time Distribution
         </h3>
-        <p className="text-xs text-gray-500 mt-1">Click on a bar to see drivers in that time range</p>
+        <p className="mt-1 text-xs text-zinc-500">Click a bar to see drivers in that time range</p>
       </div>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data} onClick={handleChartClick}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#252525" />
+          <CartesianGrid vertical={false} stroke="var(--chart-grid)" />
           <XAxis
             dataKey="bin"
-            stroke="#6b7280"
-            style={{ fontSize: '12px' }}
+            tickLine={false}
+            axisLine={false}
+            tick={{ fill: 'var(--chart-axis)', fontSize: 11 }}
             angle={-45}
             textAnchor="end"
             height={80}
           />
           <YAxis
-            stroke="#6b7280"
-            style={{ fontSize: '14px' }}
-            label={{ value: 'Driver Count', angle: -90, position: 'insideLeft', style: { fill: '#6b7280' } }}
+            width={40}
+            tickLine={false}
+            axisLine={false}
+            tick={{ fill: 'var(--chart-axis)', fontSize: 11 }}
           />
           <Tooltip
+            cursor={{ fill: 'var(--chart-cursor)' }}
             contentStyle={{
-              backgroundColor: '#1a1a1a',
-              border: '1px solid #252525',
+              backgroundColor: 'var(--chart-tooltip-bg)',
+              border: '1px solid var(--chart-tooltip-border)',
               borderRadius: '8px',
-              color: '#ffffff',
+              fontSize: '12px',
+              color: '#fafafa',
             }}
             itemStyle={{
-              color: '#ffffff',
+              color: '#fafafa',
             }}
             labelStyle={{
-              color: '#ffffff',
+              color: '#a1a1aa',
             }}
             formatter={(value: number, name: string, props: any) => {
               if (name === 'count') {
@@ -65,12 +69,9 @@ export default function TimeDistributionChart({ data, onTimeRangeClick }: TimeDi
               return [value, name];
             }}
           />
-          <Bar dataKey="count" fill="#ff3333" radius={[8, 8, 0, 0]} cursor="pointer" />
+          <Bar dataKey="count" fill="var(--chart-bar)" radius={[4, 4, 0, 0]} cursor="pointer" />
         </BarChart>
       </ResponsiveContainer>
-      <p className="text-xs text-gray-400 mt-4 text-center">
-        Distribution of lap times across all drivers
-      </p>
     </div>
   );
 }

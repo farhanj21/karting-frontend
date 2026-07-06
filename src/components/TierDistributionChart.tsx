@@ -10,12 +10,12 @@ interface TierDistributionChartProps {
 }
 
 const TIER_COLORS: Record<string, string> = {
-  'S+': '#a855f7',
-  'S': '#fbbf24',
-  'A': '#10b981',
-  'B': '#3b82f6',
-  'C': '#6b7280',
-  'D': '#ef4444',
+  'S+': 'var(--tier-s-plus)',
+  'S': 'var(--tier-s)',
+  'A': 'var(--tier-a)',
+  'B': 'var(--tier-b)',
+  'C': 'var(--tier-c)',
+  'D': 'var(--tier-d)',
 };
 
 export default function TierDistributionChart({ data, onTierClick, selectedTier }: TierDistributionChartProps) {
@@ -27,37 +27,42 @@ export default function TierDistributionChart({ data, onTierClick, selectedTier 
   };
 
   return (
-    <div className="bg-surface border border-surfaceHover rounded-lg p-6">
-      <div className="mb-6">
-        <h3 className="text-xl font-display font-bold text-white">
+    <div className="rounded-xl border bg-surface p-5 md:p-6">
+      <div className="mb-5">
+        <h3 className="text-lg font-semibold tracking-tight">
           Tier Distribution
         </h3>
-        <p className="text-xs text-gray-500 mt-1">Click on a bar to filter leaderboard</p>
+        <p className="mt-1 text-xs text-zinc-500">Click a bar to filter the leaderboard</p>
       </div>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data} onClick={handleChartClick} barCategoryGap="20%">
-          <CartesianGrid strokeDasharray="3 3" stroke="#252525" />
+          <CartesianGrid vertical={false} stroke="var(--chart-grid)" />
           <XAxis
             dataKey="tier"
-            stroke="#6b7280"
-            style={{ fontSize: '14px' }}
+            tickLine={false}
+            axisLine={false}
+            tick={{ fill: 'var(--chart-axis)', fontSize: 11 }}
           />
           <YAxis
-            stroke="#6b7280"
-            style={{ fontSize: '14px' }}
+            width={40}
+            tickLine={false}
+            axisLine={false}
+            tick={{ fill: 'var(--chart-axis)', fontSize: 11 }}
           />
           <Tooltip
+            cursor={{ fill: 'var(--chart-cursor)' }}
             contentStyle={{
-              backgroundColor: '#1a1a1a',
-              border: '1px solid #252525',
+              backgroundColor: 'var(--chart-tooltip-bg)',
+              border: '1px solid var(--chart-tooltip-border)',
               borderRadius: '8px',
-              color: '#ffffff',
+              fontSize: '12px',
+              color: '#fafafa',
             }}
             itemStyle={{
-              color: '#ffffff',
+              color: '#fafafa',
             }}
             labelStyle={{
-              color: '#ffffff',
+              color: '#a1a1aa',
             }}
             formatter={(value: number, name: string) => {
               if (name === 'count') return [value, 'Drivers'];
@@ -66,33 +71,33 @@ export default function TierDistributionChart({ data, onTierClick, selectedTier 
           />
           <Bar
             dataKey="count"
-            radius={[8, 8, 0, 0]}
+            radius={[4, 4, 0, 0]}
             cursor="pointer"
           >
             {data.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
-                fill={TIER_COLORS[entry.tier] || '#6b7280'}
+                fill={TIER_COLORS[entry.tier] || 'var(--tier-c)'}
                 opacity={selectedTier && selectedTier !== entry.tier ? 0.3 : 1}
               />
             ))}
           </Bar>
         </BarChart>
       </ResponsiveContainer>
-      <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-2">
+      <div className="mt-4 grid grid-cols-2 gap-2 md:grid-cols-3">
         {data.map((item) => (
           <button
             key={item.tier}
             onClick={() => onTierClick?.(item.tier)}
-            className={`flex items-center gap-2 text-sm transition-opacity hover:opacity-100 ${
+            className={`flex items-center gap-2 text-xs transition-opacity duration-150 hover:opacity-100 ${
               selectedTier && selectedTier !== item.tier ? 'opacity-30' : 'opacity-100'
             }`}
           >
-            <div
-              className="w-3 h-3 rounded"
+            <span
+              className="h-2.5 w-2.5 shrink-0 rounded-sm"
               style={{ backgroundColor: TIER_COLORS[item.tier] }}
             />
-            <span className="text-gray-400">
+            <span className="tabular-nums text-zinc-400">
               {item.tier}: {item.count} ({item.percentage.toFixed(1)}%)
             </span>
           </button>

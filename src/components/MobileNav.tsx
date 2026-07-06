@@ -28,51 +28,49 @@ export default function MobileNav({ currentPath }: MobileNavProps) {
       {/* Hamburger button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="lg:hidden text-gray-400 hover:text-white transition-colors"
+        className="text-zinc-400 transition-colors duration-150 hover:text-zinc-100 lg:hidden"
         aria-label="Open menu"
       >
-        <Menu className="w-6 h-6" />
+        <Menu className="h-5 w-5" />
       </button>
 
       {/* Backdrop overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       {/* Drawer */}
       <div
-        className={`fixed top-0 right-0 h-full w-4/5 max-w-sm bg-surface border-l border-surfaceHover z-50 transform transition-transform duration-300 ease-out lg:hidden ${
+        className={`fixed right-0 top-0 z-50 h-full w-4/5 max-w-sm transform border-l bg-surface transition-transform duration-300 ease-out lg:hidden ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-surfaceHover">
-          <h2 className="text-lg font-display font-bold text-white">
-            Select Track
-          </h2>
+        <div className="flex items-center justify-between border-b p-5">
+          <h2 className="text-sm font-semibold tracking-tight">Select Track</h2>
           <button
             onClick={() => setIsOpen(false)}
-            className="text-gray-400 hover:text-white transition-colors"
+            className="rounded-lg p-1.5 text-zinc-500 transition-colors duration-150 hover:bg-surfaceHover/60 hover:text-zinc-100"
             aria-label="Close menu"
           >
-            <X className="w-6 h-6" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Navigation links */}
-        <nav className="flex flex-col p-6 space-y-4">
+        <nav className="flex flex-col gap-1 p-3">
           {tracks.map((track) => (
             <Link
               key={track.href}
               href={track.href}
               onClick={handleLinkClick}
-              className={`text-lg font-medium transition-colors py-2 px-3 rounded ${
+              className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-150 ${
                 currentPath === track.href
-                  ? 'text-primary bg-primary/10'
-                  : 'text-gray-300 hover:text-primary hover:bg-surfaceHover'
+                  ? 'bg-accent/10 text-accent-soft'
+                  : 'text-zinc-400 hover:bg-surfaceHover/60 hover:text-zinc-100'
               }`}
             >
               {track.name}

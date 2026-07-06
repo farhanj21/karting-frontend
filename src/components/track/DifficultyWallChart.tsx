@@ -25,11 +25,11 @@ const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
-      <div className="bg-surface border border-surfaceHover rounded-lg p-3 shadow-lg">
-        <p className="text-sm text-gray-400 mb-1">Lap Time</p>
-        <p className="text-lg font-bold text-white mb-2">{formatTime(data.timeInSeconds)}</p>
-        <p className="text-sm text-gray-400 mb-1">Drivers</p>
-        <p className="text-xl font-bold text-accent">{data.count}</p>
+      <div className="rounded-lg border bg-surface px-3 py-2 shadow-md">
+        <p className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">Lap Time</p>
+        <p className="font-mono text-sm tabular-nums text-zinc-100">{formatTime(data.timeInSeconds)}</p>
+        <p className="mt-1.5 text-[11px] font-medium uppercase tracking-wider text-zinc-500">Drivers</p>
+        <p className="text-sm font-semibold tabular-nums text-zinc-100">{data.count}</p>
       </div>
     );
   }
@@ -49,6 +49,8 @@ export default function DifficultyWallChart({
     return timeInSeconds >= Math.floor(warZoneStart) && timeInSeconds <= Math.floor(warZoneEnd);
   };
 
+  const hasWarZone = Boolean(warZoneStart && warZoneEnd);
+
   const handleChartClick = (data: any) => {
     if (data && data.activePayload && data.activePayload.length > 0) {
       const payload = data.activePayload[0].payload;
@@ -58,7 +60,21 @@ export default function DifficultyWallChart({
 
   return (
     <div className="w-full">
-      <p className="text-xs text-gray-500 mb-4">Click on a bar to filter drivers by lap time</p>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <p className="text-xs text-zinc-500">Click a bar to filter drivers by lap time</p>
+        {hasWarZone && (
+          <div className="flex items-center gap-4 text-xs text-zinc-500">
+            <span className="flex items-center gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-sm" style={{ backgroundColor: 'var(--chart-bar)' }} />
+              Lap times
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-sm" style={{ backgroundColor: 'var(--chart-warzone)' }} />
+              War zone
+            </span>
+          </div>
+        )}
+      </div>
       <div className="h-[400px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
@@ -67,50 +83,33 @@ export default function DifficultyWallChart({
             onClick={handleChartClick}
             barCategoryGap="10%"
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.3} />
+            <CartesianGrid vertical={false} stroke="var(--chart-grid)" />
             <XAxis
               dataKey="timeInSeconds"
               tickFormatter={formatTime}
-              stroke="#9CA3AF"
+              tickLine={false}
+              axisLine={false}
               angle={-45}
               textAnchor="end"
               height={60}
-              tick={{ fill: '#9CA3AF', fontSize: 12 }}
+              tick={{ fill: 'var(--chart-axis)', fontSize: 11 }}
             />
             <YAxis
-              stroke="#9CA3AF"
-              tick={{ fill: '#9CA3AF', fontSize: 12 }}
-              label={{
-                value: 'Number of Drivers',
-                angle: -90,
-                position: 'insideLeft',
-                style: { fill: '#9CA3AF', fontSize: 14 },
-              }}
+              width={40}
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: 'var(--chart-axis)', fontSize: 11 }}
             />
-            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(99, 102, 241, 0.1)' }} />
+            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'var(--chart-cursor)' }} />
             <Bar dataKey="count" radius={[4, 4, 0, 0]} cursor="pointer">
               {data.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
-                  fill={
-                    isInWarZone(entry.timeInSeconds)
-                      ? 'url(#warZoneGradient)'
-                      : 'url(#normalGradient)'
-                  }
+                  fill={isInWarZone(entry.timeInSeconds) ? 'var(--chart-warzone)' : 'var(--chart-bar)'}
                   opacity={selectedTime !== undefined && selectedTime !== entry.timeInSeconds ? 0.3 : 1}
                 />
               ))}
             </Bar>
-            <defs>
-              <linearGradient id="normalGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#6366F1" stopOpacity={0.8} />
-                <stop offset="100%" stopColor="#6366F1" stopOpacity={0.4} />
-              </linearGradient>
-              <linearGradient id="warZoneGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#F97316" stopOpacity={0.9} />
-                <stop offset="100%" stopColor="#EF4444" stopOpacity={0.6} />
-              </linearGradient>
-            </defs>
           </BarChart>
         </ResponsiveContainer>
       </div>

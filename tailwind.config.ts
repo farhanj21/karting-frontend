@@ -10,24 +10,32 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: '#0a0a0a',
-        surface: '#1a1a1a',
-        surfaceHover: '#252525',
-        primary: '#ff3333',
-        secondary: '#ffaa00',
-        accent: '#00ff88',
+        background: '#09090b',
+        surface: '#18181b',
+        surfaceHover: '#27272a',
+        foreground: '#fafafa',
 
-        // Tier colors
-        tierSPlus: '#a855f7',
-        tierS: '#fbbf24',
-        tierA: '#10b981',
-        tierB: '#3b82f6',
-        tierC: '#6b7280',
-        tierD: '#ef4444',
+        // Single accent — violet ("purple lap" = fastest)
+        accent: {
+          DEFAULT: '#8b5cf6',
+          soft: '#a78bfa',
+          strong: '#7c3aed',
+        },
+
+        // Tier colors: DEFAULT for chart fills / tints, text for badge text
+        tierSPlus: { DEFAULT: '#8b5cf6', text: '#c4b5fd' },
+        tierS: { DEFAULT: '#f59e0b', text: '#fcd34d' },
+        tierA: { DEFAULT: '#10b981', text: '#6ee7b7' },
+        tierB: { DEFAULT: '#3b82f6', text: '#93c5fd' },
+        tierC: { DEFAULT: '#71717a', text: '#d4d4d8' },
+        tierD: { DEFAULT: '#ef4444', text: '#fca5a5' },
+      },
+      borderColor: {
+        DEFAULT: '#27272a',
       },
       fontFamily: {
-        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
-        display: ['var(--font-rajdhani)', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-mono)', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
     },
   },

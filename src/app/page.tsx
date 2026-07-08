@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import MobileNav from '@/components/MobileNav';
+import { SignatureInView } from '@/components/ui/SignatureInView';
 import { Track } from '@/types';
 import connectDB from '@/lib/mongodb';
 import TrackModel from '@/lib/models/Track';
@@ -185,10 +186,13 @@ export default async function HomePage() {
 
       {/* Footer */}
       <footer className="mt-8 border-t">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-          <p className="text-center text-xs text-zinc-500">
+        <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-8 sm:flex-row sm:justify-between sm:gap-6 sm:px-6 lg:px-8">
+          <p className="text-xs text-zinc-500">
             Data sourced from RaceFacer • Updated to 29th March 2026
           </p>
+          <span className="text-zinc-500 transition-colors duration-150 hover:text-accent-soft">
+            <SignatureInView />
+          </span>
         </div>
       </footer>
     </div>

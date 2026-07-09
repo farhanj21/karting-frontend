@@ -194,7 +194,7 @@ export default async function HomePage() {
             <SignatureInView />
           </div>
           <p className="text-center text-xs text-zinc-500 sm:text-right">
-            Updated to 29th March 2026
+            Updated to 9th July 2026
           </p>
         </div>
       </footer>

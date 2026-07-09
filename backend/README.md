@@ -1,6 +1,6 @@
 # Pakistan Karting Lap Time Analysis 🏎️
 
-### Last Data Sync: 3rd February 2026
+### Last Data Sync: 9th July 2026
 
 **Pakistan Karting Lap Time Analysis** is a comprehensive data-analysis system for karting lap times from Pakistan's premier tracks. The system consists of Python-based data scraping and analysis tools, plus a modern Next.js dashboard for interactive visualization and leaderboards.
 

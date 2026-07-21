@@ -32,6 +32,18 @@ function toDateTimeLocal(iso?: string): string {
   )}:${pad(d.getMinutes())}`;
 }
 
+/**
+ * Convert a `datetime-local` value (a wall-clock string with no timezone, e.g.
+ * "2026-07-21T14:30") into a full ISO instant. The input is interpreted in the
+ * user's local timezone here on the client, so the server records the exact
+ * moment they picked rather than re-interpreting the offset-less string in the
+ * server's timezone (which is UTC in production).
+ */
+function dateTimeLocalToISO(value: string): string {
+  const d = new Date(value);
+  return isNaN(d.getTime()) ? value : d.toISOString();
+}
+
 /** Some tracks list a kart type that isn't user-selectable on the leaderboard. */
 function availableKartTypes(track: Track | undefined): string[] {
   if (!track?.kartTypes) return [];
@@ -226,7 +238,7 @@ export default function SessionForm({ tracks, initial, onSuccess, onCancel }: Se
     setSubmitting(true);
     try {
       const payload = {
-        date,
+        date: dateTimeLocalToISO(date),
         trackSlug,
         kartType: kartType || undefined,
         noTime,

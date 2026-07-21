@@ -4,14 +4,19 @@ import { formatTime } from '@/lib/utils';
  * Lap-time input rules — matches the site's existing format, e.g. "00:57.241".
  *
  * Accepted inputs (all normalized to canonical "MM:SS.mmm"):
- *   - "00:57.241" / "1:02.5"    → minutes:seconds.millis (period separator)
+ *   - "00:57.241" / "1:02.5"    → minutes:seconds.millis
  *   - "1:26:880"                → minutes:seconds:millis (colon separator too)
- *   - "57.241"                  → bare seconds (< 60)
- * The millis separator may be "." or ":". Milliseconds may be 1–3 digits and
- * are right-padded (".5" → ".500").
+ *   - "1:03,483"                → comma decimal separator
+ *   - "01:03"                   → whole seconds (milliseconds optional → .000)
+ *   - "57.241"                  → bare seconds
+ *   - "63.483"                  → bare seconds over a minute (a 1:03 lap)
+ * Seconds may be 1–2 digits after a colon. The millis separator may be ".", ","
+ * or ":", and milliseconds are optional and 1–3 digits, right-padded (".5" →
+ * ".500"). The overall value is still range-checked below, so nonsense is
+ * rejected even though the shape is lenient.
  */
-const MMSS = /^(\d{1,2}):([0-5]\d)[.:](\d{1,3})$/;
-const SECONDS_ONLY = /^([0-5]?\d)\.(\d{1,3})$/;
+const MMSS = /^(\d{1,2}):([0-5]?\d)(?:[.,:](\d{1,3}))?$/;
+const SECONDS_ONLY = /^(\d{1,3})(?:[.,](\d{1,3}))?$/;
 
 export interface ParsedTime {
   seconds: number;
@@ -33,15 +38,15 @@ export function parseLapTime(input: string): ParsedTime | null {
   if (mmss) {
     minutes = parseInt(mmss[1], 10);
     secs = parseInt(mmss[2], 10);
-    millis = mmss[3];
+    millis = mmss[3] ?? ''; // milliseconds are optional
   } else if (secOnly) {
     secs = parseInt(secOnly[1], 10);
-    millis = secOnly[2];
+    millis = secOnly[2] ?? '';
   } else {
     return null;
   }
 
-  const ms = parseInt(millis.padEnd(3, '0'), 10);
+  const ms = millis ? parseInt(millis.padEnd(3, '0'), 10) : 0;
   const seconds = minutes * 60 + secs + ms / 1000;
 
   // Guard against implausible values (> 20 min lap is almost certainly a typo).

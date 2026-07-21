@@ -35,12 +35,15 @@ export default function ImprovementChart({ sessions }: { sessions: KartingSessio
 
   const chartData = useMemo(() => {
     return sessions
-      .filter((s) => `${s.trackSlug}::${s.kartType ?? ''}` === activeGroup)
+      .filter(
+        (s) =>
+          `${s.trackSlug}::${s.kartType ?? ''}` === activeGroup && s.bestTime != null
+      )
       .slice()
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
       .map((s) => ({
         date: new Date(s.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
-        best: Number(s.bestTime.toFixed(3)),
+        best: Number(s.bestTime!.toFixed(3)),
         label: s.bestTimeStr,
       }));
   }, [sessions, activeGroup]);

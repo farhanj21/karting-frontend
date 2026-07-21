@@ -13,8 +13,8 @@ export interface IKartingSession {
   trackSlug: string;
   trackName: string;
   kartType?: string; // track-dependent (e.g. "Pro Karts", "Track 1")
-  bestTime: number; // seconds — canonical value for sorting / PB math
-  bestTimeStr: string; // "MM:SS.mmm"
+  bestTime?: number; // seconds — canonical value for sorting / PB math; undefined when no time recorded
+  bestTimeStr?: string; // "MM:SS.mmm"
   laps: ISessionLap[]; // optional list of individual laps
   conditions?: string; // weather / track condition
   kartNumber?: string;
@@ -40,8 +40,8 @@ const KartingSessionSchema = new Schema<IKartingSession>(
     trackSlug: { type: String, required: true, index: true },
     trackName: { type: String, required: true },
     kartType: { type: String },
-    bestTime: { type: Number, required: true },
-    bestTimeStr: { type: String, required: true },
+    bestTime: { type: Number },
+    bestTimeStr: { type: String },
     laps: { type: [SessionLapSchema], default: [] },
     conditions: { type: String },
     kartNumber: { type: String },

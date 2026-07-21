@@ -145,8 +145,9 @@ export interface KartingSession {
   trackSlug: string;
   trackName: string;
   kartType?: string;
-  bestTime: number;
-  bestTimeStr: string;
+  /** Undefined when the session was logged with no recorded time. */
+  bestTime?: number;
+  bestTimeStr?: string;
   laps: SessionLap[];
   conditions?: string;
   kartNumber?: string;

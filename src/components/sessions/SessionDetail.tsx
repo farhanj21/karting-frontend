@@ -67,7 +67,13 @@ export default function SessionDetail({ session, onClose, onEdit, onDelete }: Se
         {/* Best lap */}
         <div className="mt-5 rounded-xl border bg-background p-4">
           <p className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">Best lap</p>
-          <p className="mt-1 font-mono text-2xl tabular-nums text-accent-soft">{session.bestTimeStr}</p>
+          <p
+            className={`mt-1 font-mono text-2xl tabular-nums ${
+              session.bestTimeStr ? 'text-accent-soft' : 'text-zinc-600'
+            }`}
+          >
+            {session.bestTimeStr ?? 'No time recorded'}
+          </p>
         </div>
 
         {/* All laps */}

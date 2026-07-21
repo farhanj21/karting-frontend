@@ -80,10 +80,21 @@ export async function PATCH(req: NextRequest, { params }: Params) {
       );
     }
 
+    // Split out the optional time fields: when a session is edited to "No time"
+    // they're undefined, and Mongoose ignores undefined keys — so we must
+    // explicitly $unset them to clear a previously-recorded time.
+    const { bestTime, bestTimeStr, ...rest } = result.value;
+    const set: Record<string, unknown> = { ...rest, trackName: track.name };
+    const unset: Record<string, ''> = {};
+    if (bestTime == null) unset.bestTime = '';
+    else set.bestTime = bestTime;
+    if (bestTimeStr == null) unset.bestTimeStr = '';
+    else set.bestTimeStr = bestTimeStr;
+
     // findOneAndUpdate scoped by userId — cannot touch another user's row.
     const session = await KartingSession.findOneAndUpdate(
       { _id: params.id, userId },
-      { ...result.value, trackName: track.name },
+      Object.keys(unset).length ? { $set: set, $unset: unset } : set,
       { new: true, runValidators: true }
     ).lean();
 

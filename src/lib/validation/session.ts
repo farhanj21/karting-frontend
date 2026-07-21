@@ -72,6 +72,7 @@ export interface SessionInput {
   kartType?: unknown;
   bestTimeStr?: unknown;
   laps?: unknown; // array of time strings
+  noTime?: unknown; // when true, the session is saved without any recorded time
   conditions?: unknown;
   kartNumber?: unknown;
   cost?: unknown;
@@ -82,8 +83,8 @@ export interface ValidatedSession {
   date: Date;
   trackSlug: string;
   kartType?: string;
-  bestTime: number;
-  bestTimeStr: string;
+  bestTime?: number; // undefined when noTime
+  bestTimeStr?: string; // undefined when noTime
   laps: { lapNumber: number; time: number; timeStr: string }[];
   conditions?: string;
   kartNumber?: string;
@@ -131,9 +132,13 @@ export function validateSession(input: SessionInput): ValidationResult {
       ? input.kartType.trim()
       : undefined;
 
-  // --- Lap times: either an explicit best time, or a list of laps ---
+  // --- Lap times: either an explicit best time, a list of laps, or "no time" ---
+  // When noTime is set the session is logged without any recorded lap time
+  // (e.g. a DNF, a rained-out session, or a run where times weren't captured).
+  const noTime = input.noTime === true;
+
   const laps: { lapNumber: number; time: number; timeStr: string }[] = [];
-  if (Array.isArray(input.laps)) {
+  if (!noTime && Array.isArray(input.laps)) {
     input.laps.forEach((lap, i) => {
       if (typeof lap !== 'string' || !lap.trim()) return; // skip blanks
       const parsed = parseLapTime(lap);
@@ -146,22 +151,24 @@ export function validateSession(input: SessionInput): ValidationResult {
   }
 
   let best: ParsedTime | null = null;
-  const hasBestInput = typeof input.bestTimeStr === 'string' && input.bestTimeStr.trim();
-  if (hasBestInput) {
-    best = parseLapTime(input.bestTimeStr as string);
-    if (!best) {
-      errors.bestTimeStr = 'Use MM:SS.mmm format, e.g. 00:57.241.';
+  if (!noTime) {
+    const hasBestInput = typeof input.bestTimeStr === 'string' && input.bestTimeStr.trim();
+    if (hasBestInput) {
+      best = parseLapTime(input.bestTimeStr as string);
+      if (!best) {
+        errors.bestTimeStr = 'Use MM:SS.mmm format, e.g. 00:57.241.';
+      }
     }
-  }
 
-  // Derive best from laps when no explicit best was given.
-  if (!best && laps.length > 0) {
-    const fastest = laps.reduce((a, b) => (b.time < a.time ? b : a));
-    best = { seconds: fastest.time, timeStr: fastest.timeStr };
-  }
+    // Derive best from laps when no explicit best was given.
+    if (!best && laps.length > 0) {
+      const fastest = laps.reduce((a, b) => (b.time < a.time ? b : a));
+      best = { seconds: fastest.time, timeStr: fastest.timeStr };
+    }
 
-  if (!best && laps.length === 0 && !errors.bestTimeStr) {
-    errors.bestTimeStr = 'Enter a best lap time, or add individual lap times.';
+    if (!best && laps.length === 0 && !errors.bestTimeStr) {
+      errors.bestTimeStr = 'Enter a best lap time, add individual lap times, or select "No time".';
+    }
   }
 
   // --- Optional fields ---
@@ -198,8 +205,8 @@ export function validateSession(input: SessionInput): ValidationResult {
       date: date!,
       trackSlug,
       kartType,
-      bestTime: best!.seconds,
-      bestTimeStr: best!.timeStr,
+      bestTime: best?.seconds,
+      bestTimeStr: best?.timeStr,
       laps,
       conditions,
       kartNumber,

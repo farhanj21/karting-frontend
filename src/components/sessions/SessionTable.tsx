@@ -70,10 +70,14 @@ export default function SessionTable({
                 </td>
                 <td
                   className={`whitespace-nowrap px-4 py-3 text-right font-mono tabular-nums ${
-                    isPB ? 'font-semibold text-accent-soft' : 'text-accent-soft'
+                    s.bestTimeStr
+                      ? isPB
+                        ? 'font-semibold text-accent-soft'
+                        : 'text-accent-soft'
+                      : 'not-italic text-zinc-600'
                   }`}
                 >
-                  {s.bestTimeStr}
+                  {s.bestTimeStr ?? 'No time'}
                 </td>
                 <td className="px-4 py-3 text-right">
                   <button

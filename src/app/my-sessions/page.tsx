@@ -64,9 +64,10 @@ export default function MySessionsPage() {
   const personalBestIds = useMemo(() => {
     const bestByGroup = new Map<string, KartingSession>();
     for (const s of sessions) {
+      if (s.bestTime == null) continue; // "no time" sessions can't be a personal best
       const key = `${s.trackSlug}::${s.kartType ?? ''}`;
       const cur = bestByGroup.get(key);
-      if (!cur || s.bestTime < cur.bestTime) bestByGroup.set(key, s);
+      if (cur?.bestTime == null || s.bestTime < cur.bestTime) bestByGroup.set(key, s);
     }
     return new Set(Array.from(bestByGroup.values()).map((s) => s._id));
   }, [sessions]);

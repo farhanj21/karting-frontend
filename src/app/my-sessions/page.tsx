@@ -1,11 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { Plus, Pencil, Trash2, ChevronLeft, X, MapPin, CalendarDays } from 'lucide-react';
+import { Plus, ChevronLeft, X, CalendarDays } from 'lucide-react';
 import AuthNav from '@/components/auth/AuthNav';
 import SessionForm from '@/components/sessions/SessionForm';
-import SessionStats from '@/components/sessions/SessionStats';
+import SummaryTiles from '@/components/sessions/SummaryTiles';
+import SessionTable from '@/components/sessions/SessionTable';
+import SessionDetail from '@/components/sessions/SessionDetail';
+import ImprovementChart from '@/components/sessions/ImprovementChart';
 import { Track, KartingSession } from '@/types';
 
 type ModalState =
@@ -32,16 +35,14 @@ export default function MySessionsPage() {
   const [modal, setModal] = useState<ModalState>({ mode: 'closed' });
   const [deleteTarget, setDeleteTarget] = useState<KartingSession | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [detailTarget, setDetailTarget] = useState<KartingSession | null>(null);
 
   useEffect(() => {
     let active = true;
     async function load() {
       setLoading(true);
       try {
-        const [sRes, tRes] = await Promise.all([
-          fetch('/api/sessions'),
-          fetch('/api/tracks'),
-        ]);
+        const [sRes, tRes] = await Promise.all([fetch('/api/sessions'), fetch('/api/tracks')]);
         const [sData, tData] = await Promise.all([sRes.json(), tRes.json()]);
         if (!active) return;
         if (sData.success) setSessions(sData.sessions);
@@ -59,6 +60,17 @@ export default function MySessionsPage() {
     };
   }, []);
 
+  // Fastest session per track + kart type — used to highlight those rows.
+  const personalBestIds = useMemo(() => {
+    const bestByGroup = new Map<string, KartingSession>();
+    for (const s of sessions) {
+      const key = `${s.trackSlug}::${s.kartType ?? ''}`;
+      const cur = bestByGroup.get(key);
+      if (!cur || s.bestTime < cur.bestTime) bestByGroup.set(key, s);
+    }
+    return new Set(Array.from(bestByGroup.values()).map((s) => s._id));
+  }, [sessions]);
+
   function handleSaved(saved: KartingSession) {
     setSessions((prev) => {
       const without = prev.filter((s) => s._id !== saved._id);
@@ -67,6 +79,7 @@ export default function MySessionsPage() {
       );
     });
     setModal({ mode: 'closed' });
+    setDetailTarget(null);
   }
 
   async function handleDelete() {
@@ -76,6 +89,7 @@ export default function MySessionsPage() {
       const res = await fetch(`/api/sessions/${deleteTarget._id}`, { method: 'DELETE' });
       if (res.ok) {
         setSessions((prev) => prev.filter((s) => s._id !== deleteTarget._id));
+        setDetailTarget((cur) => (cur?._id === deleteTarget._id ? null : cur));
         setDeleteTarget(null);
       }
     } finally {
@@ -137,94 +151,29 @@ export default function MySessionsPage() {
           </div>
         ) : (
           <>
-            {/* Stats */}
+            {/* Summary tiles */}
             <div className="mt-8">
-              <SessionStats sessions={sessions} />
+              <SummaryTiles sessions={sessions} />
             </div>
 
-            {/* Session list */}
+            {/* All sessions */}
             <div className="mt-10">
               <h2 className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
                 All sessions
               </h2>
-              <ul className="mt-4 space-y-3">
-                {sessions.map((s) => (
-                  <li
-                    key={s._id}
-                    className="group rounded-xl border bg-surface p-5 transition-colors duration-150 hover:border-zinc-700"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="min-w-0">
-                        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                          <span className="flex items-center gap-1.5 text-sm font-medium text-zinc-100">
-                            <MapPin className="h-3.5 w-3.5 text-zinc-500" />
-                            {s.trackName}
-                          </span>
-                          {s.kartType && (
-                            <span className="rounded-full border px-2 py-0.5 text-[11px] font-medium text-zinc-400">
-                              {s.kartType}
-                            </span>
-                          )}
-                        </div>
-                        <p className="mt-1.5 text-xs text-zinc-500">{formatSessionDate(s.date)}</p>
-                        {(s.conditions || s.kartNumber || s.cost != null) && (
-                          <p className="mt-1 text-xs text-zinc-600">
-                            {[
-                              s.conditions,
-                              s.kartNumber ? `Kart ${s.kartNumber}` : null,
-                              s.cost != null ? `Cost ${s.cost}` : null,
-                            ]
-                              .filter(Boolean)
-                              .join(' · ')}
-                          </p>
-                        )}
-                        {s.notes && <p className="mt-2 text-sm text-zinc-400">{s.notes}</p>}
-                        {s.laps.length > 0 && (
-                          <div className="mt-3 flex flex-wrap gap-1.5">
-                            {s.laps.map((lap) => (
-                              <span
-                                key={lap.lapNumber}
-                                className={`rounded-md px-2 py-0.5 font-mono text-xs tabular-nums ${
-                                  lap.time === s.bestTime
-                                    ? 'bg-accent/15 text-accent-soft'
-                                    : 'bg-surfaceHover text-zinc-400'
-                                }`}
-                              >
-                                {lap.timeStr}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
+              <div className="mt-4">
+                <SessionTable
+                  sessions={sessions}
+                  personalBestIds={personalBestIds}
+                  onRowClick={(s) => setDetailTarget(s)}
+                  onEdit={(s) => setModal({ mode: 'edit', session: s })}
+                />
+              </div>
+            </div>
 
-                      <div className="flex shrink-0 flex-col items-end gap-2">
-                        <div className="text-right">
-                          <p className="text-[10px] uppercase tracking-wider text-zinc-500">Best</p>
-                          <p className="font-mono text-lg tabular-nums text-accent-soft">
-                            {s.bestTimeStr}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-1 opacity-0 transition-opacity duration-150 group-hover:opacity-100 focus-within:opacity-100">
-                          <button
-                            onClick={() => setModal({ mode: 'edit', session: s })}
-                            className="rounded-md p-1.5 text-zinc-500 transition-colors duration-150 hover:bg-surfaceHover hover:text-zinc-100"
-                            aria-label="Edit session"
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </button>
-                          <button
-                            onClick={() => setDeleteTarget(s)}
-                            className="rounded-md p-1.5 text-zinc-500 transition-colors duration-150 hover:bg-surfaceHover hover:text-tierD-text"
-                            aria-label="Delete session"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+            {/* Improvement over time */}
+            <div className="mt-10">
+              <ImprovementChart sessions={sessions} />
             </div>
           </>
         )}
@@ -254,6 +203,22 @@ export default function MySessionsPage() {
             />
           </div>
         </div>
+      )}
+
+      {/* Session detail */}
+      {detailTarget && (
+        <SessionDetail
+          session={detailTarget}
+          onClose={() => setDetailTarget(null)}
+          onEdit={() => {
+            setModal({ mode: 'edit', session: detailTarget });
+            setDetailTarget(null);
+          }}
+          onDelete={() => {
+            setDeleteTarget(detailTarget);
+            setDetailTarget(null);
+          }}
+        />
       )}
 
       {/* Delete confirmation */}

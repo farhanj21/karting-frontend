@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Plus, Trash2, X } from 'lucide-react';
+import { Plus, Trash2, X, ChevronDown } from 'lucide-react';
 import { Track, KartingSession } from '@/types';
 import { parseLapTime } from '@/lib/validation/session';
 
@@ -170,18 +170,21 @@ export default function SessionForm({ tracks, initial, onSuccess, onCancel }: Se
         </div>
         <div>
           <label className={labelClass}>Track</label>
-          <select
-            value={trackSlug}
-            onChange={(e) => handleTrackChange(e.target.value)}
-            className={`${inputClass} [color-scheme:dark]`}
-          >
-            <option value="">Select a track…</option>
-            {tracks.map((t) => (
-              <option key={t.slug} value={t.slug}>
-                {t.name}
-              </option>
-            ))}
-          </select>
+          <div className="relative">
+            <select
+              value={trackSlug}
+              onChange={(e) => handleTrackChange(e.target.value)}
+              className={`${inputClass} cursor-pointer appearance-none pr-9 [color-scheme:dark]`}
+            >
+              <option value="">Select a track…</option>
+              {tracks.map((t) => (
+                <option key={t.slug} value={t.slug}>
+                  {t.name}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+          </div>
           {errors.trackSlug && <p className={errorClass}>{errors.trackSlug}</p>}
         </div>
       </div>

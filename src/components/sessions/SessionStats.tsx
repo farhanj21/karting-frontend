@@ -10,7 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { CalendarDays, MapPin, Timer } from 'lucide-react';
+import { CalendarDays, MapPin, Timer, ChevronDown } from 'lucide-react';
 import StatCard from '@/components/StatCard';
 import { KartingSession } from '@/types';
 import { formatTime } from '@/lib/utils';
@@ -122,17 +122,20 @@ export default function SessionStats({ sessions }: SessionStatsProps) {
               <p className="mt-1 text-xs text-zinc-500">Best lap per session</p>
             </div>
             {groups.length > 1 && (
-              <select
-                value={selectedGroup}
-                onChange={(e) => setSelectedGroup(e.target.value)}
-                className="rounded-lg border bg-background px-3 py-1.5 text-xs text-zinc-100 outline-none [color-scheme:dark] focus:border-accent"
-              >
-                {groups.map((g) => (
-                  <option key={g.key} value={g.key}>
-                    {g.label}
-                  </option>
-                ))}
-              </select>
+              <div className="relative">
+                <select
+                  value={selectedGroup}
+                  onChange={(e) => setSelectedGroup(e.target.value)}
+                  className="cursor-pointer appearance-none rounded-lg border bg-background py-1.5 pl-3 pr-8 text-xs text-zinc-100 outline-none [color-scheme:dark] focus:border-accent"
+                >
+                  {groups.map((g) => (
+                    <option key={g.key} value={g.key}>
+                      {g.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-500" />
+              </div>
             )}
           </div>
 

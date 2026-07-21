@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
-import { ClipboardList } from 'lucide-react';
+import { SignedIn, SignedOut, UserButton, SignOutButton } from '@clerk/nextjs';
+import { ClipboardList, LogOut } from 'lucide-react';
 
 /**
  * Header account control. Additive — shows a "My Sessions" link + account
@@ -35,6 +35,15 @@ export default function AuthNav() {
           <ClipboardList className="h-4 w-4" />
           <span className="hidden sm:inline">My Sessions</span>
         </Link>
+        <SignOutButton redirectUrl="/">
+          <button
+            type="button"
+            className="flex items-center gap-1.5 text-sm font-medium text-zinc-400 transition-colors duration-150 hover:text-zinc-100"
+          >
+            <LogOut className="h-4 w-4" />
+            <span className="hidden sm:inline">Log out</span>
+          </button>
+        </SignOutButton>
         <UserButton
           afterSignOutUrl="/"
           appearance={{ elements: { avatarBox: 'h-7 w-7' } }}

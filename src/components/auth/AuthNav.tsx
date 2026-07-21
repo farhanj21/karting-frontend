@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { SignedIn, SignedOut, UserButton, SignOutButton } from '@clerk/nextjs';
-import { ClipboardList, LogOut } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import { ClipboardList } from 'lucide-react';
 
 /**
  * Header account control. Additive — shows a "My Sessions" link + account
@@ -10,6 +11,8 @@ import { ClipboardList, LogOut } from 'lucide-react';
  * drop into any page header; unauthenticated visitors just see "Sign in".
  */
 export default function AuthNav() {
+  const pathname = usePathname();
+
   return (
     <div className="flex items-center gap-3">
       <SignedOut>
@@ -28,22 +31,15 @@ export default function AuthNav() {
       </SignedOut>
 
       <SignedIn>
-        <Link
-          href="/my-sessions"
-          className="flex items-center gap-1.5 text-sm font-medium text-zinc-400 transition-colors duration-150 hover:text-zinc-100"
-        >
-          <ClipboardList className="h-4 w-4" />
-          <span className="hidden sm:inline">My Sessions</span>
-        </Link>
-        <SignOutButton redirectUrl="/">
-          <button
-            type="button"
+        {pathname !== '/my-sessions' && (
+          <Link
+            href="/my-sessions"
             className="flex items-center gap-1.5 text-sm font-medium text-zinc-400 transition-colors duration-150 hover:text-zinc-100"
           >
-            <LogOut className="h-4 w-4" />
-            <span className="hidden sm:inline">Log out</span>
-          </button>
-        </SignOutButton>
+            <ClipboardList className="h-4 w-4" />
+            <span className="hidden sm:inline">My Sessions</span>
+          </Link>
+        )}
         <UserButton
           afterSignOutUrl="/"
           appearance={{ elements: { avatarBox: 'h-7 w-7' } }}

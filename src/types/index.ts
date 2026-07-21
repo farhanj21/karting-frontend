@@ -131,3 +131,27 @@ export interface TimeDistribution {
 }
 
 export type Tier = 'S+' | 'S' | 'A' | 'B' | 'C' | 'D';
+
+export interface SessionLap {
+  lapNumber: number;
+  time: number;
+  timeStr: string;
+}
+
+export interface KartingSession {
+  _id: string;
+  userId: string;
+  date: string;
+  trackSlug: string;
+  trackName: string;
+  kartType?: string;
+  bestTime: number;
+  bestTimeStr: string;
+  laps: SessionLap[];
+  conditions?: string;
+  kartNumber?: string;
+  cost?: number;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}

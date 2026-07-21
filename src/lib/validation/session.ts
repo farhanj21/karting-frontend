@@ -4,11 +4,13 @@ import { formatTime } from '@/lib/utils';
  * Lap-time input rules — matches the site's existing format, e.g. "00:57.241".
  *
  * Accepted inputs (all normalized to canonical "MM:SS.mmm"):
- *   - "00:57.241" / "1:02.5"   → minutes:seconds.millis
+ *   - "00:57.241" / "1:02.5"    → minutes:seconds.millis (period separator)
+ *   - "1:26:880"                → minutes:seconds:millis (colon separator too)
  *   - "57.241"                  → bare seconds (< 60)
- * Milliseconds may be 1–3 digits and are right-padded (".5" → ".500").
+ * The millis separator may be "." or ":". Milliseconds may be 1–3 digits and
+ * are right-padded (".5" → ".500").
  */
-const MMSS = /^(\d{1,2}):([0-5]\d)\.(\d{1,3})$/;
+const MMSS = /^(\d{1,2}):([0-5]\d)[.:](\d{1,3})$/;
 const SECONDS_ONLY = /^([0-5]?\d)\.(\d{1,3})$/;
 
 export interface ParsedTime {

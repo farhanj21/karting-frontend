@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import MobileNav from '@/components/MobileNav';
+import AuthNav from '@/components/auth/AuthNav';
 import { SignatureInView } from '@/components/ui/SignatureInView';
 import { Track } from '@/types';
 import connectDB from '@/lib/mongodb';
@@ -76,8 +77,11 @@ export default async function HomePage() {
               <p className="text-xs text-zinc-500">Pakistan track leaderboards</p>
             </div>
 
-            {/* Mobile navigation */}
-            <MobileNav />
+            <div className="flex items-center gap-4">
+              <AuthNav />
+              {/* Mobile navigation */}
+              <MobileNav />
+            </div>
           </div>
         </div>
       </header>
